@@ -1,6 +1,8 @@
+import 'package:adoptanddonate/screens/location_screen.dart';
 import 'package:adoptanddonate/screens/login_screen.dart';
 import 'package:adoptanddonate/screens/splash_screen.dart';
 import 'package:adoptanddonate/widgets/authentication/authentication.dart';
+import 'package:adoptanddonate/widgets/authentication/otp_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -21,11 +23,11 @@ class MyApp extends StatelessWidget {
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                primaryColor: Colors.cyan.shade900,
-              ),
-              home: const SplashScreen());
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                  primaryColor: Colors.cyan.shade900,
+                ),
+                home: const SplashScreen());
           } else {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -34,8 +36,17 @@ class MyApp extends StatelessWidget {
               ),
               home: const LoginScreen(),
               routes: {
-                LoginScreen.id:(context)=> const LoginScreen(),
-                PhoneAuthScreen.id:(context)=> const PhoneAuthScreen(),
+                LoginScreen.id: (context) => const LoginScreen(),
+                PhoneAuthScreen.id: (context) => const PhoneAuthScreen(),
+                LocationScreen.id: (context) => const LocationScreen(),
+                OtpScreen.id: (context) {
+                  final args = ModalRoute.of(context)!.settings.arguments
+                      as Map<String, String>;
+                  return OtpScreen(
+                    number: args['number']!,
+                    verID: args['verID']!,
+                  );
+                },
               },
             );
           }

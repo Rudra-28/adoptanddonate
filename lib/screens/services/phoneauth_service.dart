@@ -23,7 +23,7 @@ class PhoneAuthService {
     final PhoneCodeSent codeSent = (String verID, int? resendToken) {
   Navigator.push<void>(
     context,
-    MaterialPageRoute(builder: (context) => OtpScreen(number: number)),
+    MaterialPageRoute(builder: (context) => OtpScreen(number: number, verID: verID,)),
   );
 };
 

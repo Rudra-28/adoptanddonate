@@ -49,6 +49,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   context: context,
                   backgroundColor: Colors.white,
                   textColor: Colors.black,
+                  loadingText: "Verifying number",
+                  progressIndicatorColor: Theme.of(context).primaryColor,
                 );
 
     return Scaffold(
