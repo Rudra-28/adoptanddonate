@@ -13,29 +13,21 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+
   const MyApp({super.key});
+  
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 1)),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: ThemeData(
-                  primaryColor: Colors.cyan.shade900,
-                ),
-                home: const SplashScreen());
-          } else {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                primaryColor: Colors.cyan.shade900,
-              ),
-              home: const LoginScreen(),
-              routes: {
+     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.cyan.shade900,
+      ),
+      initialRoute:LocationScreen.id ,
+    routes:  {
+                SplashScreen.id:(context)=> const SplashScreen(),
                 LoginScreen.id: (context) => const LoginScreen(),
                 PhoneAuthScreen.id: (context) => const PhoneAuthScreen(),
                 LocationScreen.id: (context) => const LocationScreen(),
@@ -48,8 +40,42 @@ class MyApp extends StatelessWidget {
                   );
                 },
               },
-            );
-          }
-        });
+    
+     );
+     
+    
+     }
+     //FutureBuilder(
+    //     future: Future.delayed(const Duration(seconds: 1)),
+    //     builder: (context, AsyncSnapshot snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return MaterialApp(
+    //             debugShowCheckedModeBanner: false,
+    //             theme: ThemeData(
+    //               primaryColor: Colors.cyan.shade900,
+    //             ),
+    //             home: const SplashScreen());
+    //       } else {
+    //         return MaterialApp(
+    //           debugShowCheckedModeBanner: false,
+    //           theme: ThemeData(
+    //             primaryColor: Colors.cyan.shade900,
+    //           ),
+    //           home: const LoginScreen(),
+    //           routes: {
+    //             LoginScreen.id: (context) => const LoginScreen(),
+    //             PhoneAuthScreen.id: (context) => const PhoneAuthScreen(),
+    //             LocationScreen.id: (context) => const LocationScreen(),
+    //             OtpScreen.id: (context) {
+    //               final args = ModalRoute.of(context)!.settings.arguments
+    //                   as Map<String, String>;
+    //               return OtpScreen(
+    //                 number: args['number']!,
+    //                 verID: args['verID']!,
+    //               );
+    //             },
+    //           },
+    //         );
+    //       }
+    //     });
   }
-}

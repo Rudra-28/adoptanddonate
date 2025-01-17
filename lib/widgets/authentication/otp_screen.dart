@@ -1,4 +1,5 @@
 import 'package:adoptanddonate/screens/location_screen.dart';
+import 'package:adoptanddonate/screens/services/phoneauth_service.dart';
 import 'package:adoptanddonate/widgets/authentication/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,6 +20,11 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   bool _loading= false;
   String? error;
+
+
+
+  PhoneAuthService _services =PhoneAuthService();
+
   var _text1 = TextEditingController();
   var _text2 = TextEditingController();
   var _text3 = TextEditingController();
@@ -37,7 +43,8 @@ class _OtpScreenState extends State<OtpScreen> {
       final User? user = (await auth.signInWithCredential(credential)).user;
 
       if (user != null) {
-        Navigator.pushReplacementNamed(context, LocationScreen.id);
+        _services.addUser(context);
+        // Navigator.pushReplacementNamed(context, LocationScreen.id);
       } else {
         print('Login Failed');
         if(mounted){

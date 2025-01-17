@@ -39,6 +39,7 @@ dependencies:
   firebase_core: ^3.10.0
   firebase_auth: ^5.4.0
   legacy_progress_dialog: ^0.1.2
+  cloud_firestore: ^5.6.1
 
 
 
