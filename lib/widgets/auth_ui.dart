@@ -1,7 +1,11 @@
+import 'package:adoptanddonate/screens/services/phoneauth_service.dart';
 import 'package:adoptanddonate/widgets/authentication/authentication.dart';
+import 'package:adoptanddonate/widgets/authentication/google_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthUi extends StatelessWidget {
   const AuthUi({super.key});
@@ -15,8 +19,13 @@ class AuthUi extends StatelessWidget {
           SizedBox(
             width: 220,
             child: ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(Colors.white)),
+               
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
                 onPressed: () {
                   Navigator.pushNamed(context, PhoneAuthScreen.id);
                 },
@@ -34,7 +43,13 @@ class AuthUi extends StatelessWidget {
           SignInButton(
             Buttons.Google,
             text: "Sign up with Google",
-            onPressed: () {},
+            onPressed: () async {
+              User? user= await GoogleAuthentication.signInWithGoogle(context: context);
+              if(user!=null){
+                PhoneAuthService _authentication =PhoneAuthService();
+                _authentication.addUser(context, user.uid);
+              }
+            },
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),

@@ -10,10 +10,10 @@ class PhoneAuthService {
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  Future<void> addUser(BuildContext context) async {
+  Future<void> addUser(BuildContext context, String uid) async {
     //Check if the user exists
     final QuerySnapshot result =
-        await users.where('uid', isEqualTo: user!.uid).get();
+        await users.where('uid', isEqualTo: uid).get();
 
     List<DocumentSnapshot> document = result.docs;
 

@@ -1,13 +1,45 @@
+import 'package:adoptanddonate/screens/home_screen.dart';
 import 'package:adoptanddonate/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 
 class LocationScreen extends StatelessWidget {
-  const LocationScreen({super.key});
-  static const String id = 'location-screen';
+  LocationScreen({super.key});
+static const String id = 'location-screen';
 
-  //getLocation();
+  Location location = Location();
+  bool loading=false;
+  bool _serviceEnabled = false;
+  PermissionStatus _permissionGranted = PermissionStatus.denied;
+  LocationData? locationData;
+
+ Future<LocationData> getLocation() async {
+  // Check if location services are enabled
+  _serviceEnabled = await location.serviceEnabled();
+  if (!_serviceEnabled) {
+    _serviceEnabled = await location.requestService();
+    if (!_serviceEnabled) {
+      throw Exception('Location services are disabled.');
+    }
+  }
+
+  // Check location permissions
+  _permissionGranted = await location.hasPermission();
+  if (_permissionGranted == PermissionStatus.denied) {
+    _permissionGranted = await location.requestPermission();
+    if (_permissionGranted != PermissionStatus.granted) {
+      throw Exception('Location permissions are denied.');
+    }
+  }
+
+  // Get location data
+  locationData = await location.getLocation();
+  return locationData!;
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +67,24 @@ class LocationScreen extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
+                child: loading ? Center(child:CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                )):ElevatedButton.icon(
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
                         Theme.of(context).primaryColor),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(){
+                      loading=true;
+                    }
+                    getLocation().then((value){
+                      print(locationData?.latitude);
+                      if(value!=null){
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context)=> HomeScreen(locationData: locationData!)));
+                      }
+                    });
+                  },
                   icon: const Icon(CupertinoIcons.location_fill, size: 40,),
                   label: const Padding(
                     padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),

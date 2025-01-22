@@ -43,7 +43,7 @@ class _OtpScreenState extends State<OtpScreen> {
       final User? user = (await auth.signInWithCredential(credential)).user;
 
       if (user != null) {
-        _services.addUser(context);
+        _services.addUser(context, user.uid);
         // Navigator.pushReplacementNamed(context, LocationScreen.id);
       } else {
         print('Login Failed');

@@ -40,8 +40,9 @@ dependencies:
   firebase_auth: ^5.4.0
   legacy_progress_dialog: ^0.1.2
   cloud_firestore: ^5.6.1
-
-
+  location: ^7.0.1
+  location_geocoder: ^1.0.5
+  google_sign_in: ^6.2.2
 
 dev_dependencies:
   flutter_test:
