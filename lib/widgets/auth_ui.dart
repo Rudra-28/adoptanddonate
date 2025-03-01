@@ -1,5 +1,6 @@
 import 'package:adoptanddonate/screens/services/phoneauth_service.dart';
-import 'package:adoptanddonate/widgets/authentication/authentication.dart';
+import 'package:adoptanddonate/widgets/authentication/phone_auth_screen.dart';
+import 'package:adoptanddonate/widgets/authentication/email_auth_screen.dart';
 import 'package:adoptanddonate/widgets/authentication/google_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,6 @@ class AuthUi extends StatelessWidget {
           SizedBox(
             width: 220,
             child: ElevatedButton(
-               
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -44,9 +44,10 @@ class AuthUi extends StatelessWidget {
             Buttons.Google,
             text: "Sign up with Google",
             onPressed: () async {
-              User? user= await GoogleAuthentication.signInWithGoogle(context: context);
-              if(user!=null){
-                PhoneAuthService _authentication =PhoneAuthService();
+              User? user =
+                  await GoogleAuthentication.signInWithGoogle(context: context);
+              if (user != null) {
+                PhoneAuthService _authentication = PhoneAuthService();
                 _authentication.addUser(context, user.uid);
               }
             },
@@ -59,16 +60,23 @@ class AuthUi extends StatelessWidget {
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
+         InkWell(
+          onTap: (){
+            Navigator.pushNamed(context, EmailAuthScreen.id);
+          },
+           child: Container(
+             decoration:const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.white))),
+             child: const Text(
               "Login with Email",
               style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline),
+                color: Colors.white,
+                fontSize: 18,
+               
+              ),
             ),
-          )
+           ),
+         )
         ],
       ),
     );

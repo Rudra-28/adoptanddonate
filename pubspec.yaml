@@ -43,6 +43,12 @@ dependencies:
   location: ^7.0.1
   location_geocoder: ^1.0.5
   google_sign_in: ^6.2.2
+  email_validator: ^3.0.0
+  csc_picker: ^0.2.7
+  geocoding: ^3.0.0
+  flutter_neumorphic: ^3.2.0
+  animated_text_kit: ^4.2.3
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:

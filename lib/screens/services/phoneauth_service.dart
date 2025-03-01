@@ -54,7 +54,7 @@ class PhoneAuthService {
       print('the error is ${e.code}');
     };
 
-    final PhoneCodeSent codeSent = (String verID, int? resendToken) {
+    final PhoneCodeSent codeSent = (String verID, int? resendToken)async{
       Navigator.push<void>(
         context,
         MaterialPageRoute(

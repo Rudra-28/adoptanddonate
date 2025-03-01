@@ -152,10 +152,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               ),
               onPressed: () {
                 progressDialog.show();
-              
                 String number =
                     '${countryCodeController.text}${phoneNumberController.text}';
-                
                 _service.verifyPhoneNumber(context, number);
                 progressDialog.dismiss();
               },

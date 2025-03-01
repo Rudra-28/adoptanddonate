@@ -1,6 +1,6 @@
 import 'package:adoptanddonate/screens/location_screen.dart';
 import 'package:adoptanddonate/screens/services/phoneauth_service.dart';
-import 'package:adoptanddonate/widgets/authentication/authentication.dart';
+import 'package:adoptanddonate/widgets/authentication/phone_auth_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,8 +20,6 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   bool _loading= false;
   String? error;
-
-
 
   PhoneAuthService _services =PhoneAuthService();
 
