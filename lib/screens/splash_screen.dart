@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:adoptanddonate/screens/location_screen.dart';
-import 'package:adoptanddonate/screens/login_screen.dart';
+import 'package:adoptanddonate_new/screens/location_screen.dart';
+import 'package:adoptanddonate_new/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.pushReplacementNamed(context, LoginScreen.id);
         }else{
           //signed in 
-          Navigator.pushReplacementNamed(context, LocationScreen.id);
+         // Navigator.pushReplacementNamed(context, LocationScreen.id);
         }
       });
     });

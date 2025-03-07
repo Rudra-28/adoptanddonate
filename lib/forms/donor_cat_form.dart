@@ -1,7 +1,6 @@
-import 'package:adoptanddonate/forms/provider/cat_provider.dart';
+import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class DonorCatForm extends StatefulWidget {
@@ -19,6 +18,8 @@ class _DonorCatFormState extends State<DonorCatForm> {
   var _ageController = TextEditingController();
   var _genderController = TextEditingController();
   var _weightController = TextEditingController();
+  var _natureController = TextEditingController();
+
   validate() {
     if (_formKey.currentState!.validate()) {
       print("validated");
@@ -26,6 +27,13 @@ class _DonorCatFormState extends State<DonorCatForm> {
   }
 
   List<String> _genderList = ['Male', 'Female'];
+  List<String> _natureList = [
+    'Calm',
+    'Friendly',
+    'Independent',
+    'Cautious',
+    'Aggressive'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +65,8 @@ class _DonorCatFormState extends State<DonorCatForm> {
                     return ListTile(
                         onTap: () {
                           setState(() {
-                            _breedController.text =
-                                _catProvider.doc['models'][index];
+                            _breedController.text = _catProvider.doc['breeds']
+                                [index]; //Corrected line
                           });
                           Navigator.pop(context);
                         },
@@ -72,28 +80,35 @@ class _DonorCatFormState extends State<DonorCatForm> {
 
     Widget _listview({FieldValue, list, textController}) {
       return Dialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _appBar(_catProvider.selectedCategory, FieldValue),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: list.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    onTap: () {
-                      textController.text = list[index];
-                      Navigator.pop(context);
-                    },
-                    title: Text(list[index]),
-                  );
-                })
-          ],
+        child: Container(
+          //Added Container
+          height: 200, //adjust the height as needed.
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _appBar(_catProvider.selectedCategory, FieldValue),
+              Expanded(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: list.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      print('building list item $index');
+                      return ListTile(
+                        onTap: () {
+                          setState(() {
+                            textController.text = list[index];
+                          });
+                          Navigator.pop(context);
+                        },
+                        title: Text(list[index]),
+                      );
+                    }),
+              )
+            ],
+          ),
         ),
       );
     }
-
-    ;
 
     return Scaffold(
       appBar: AppBar(
@@ -153,17 +168,8 @@ class _DonorCatFormState extends State<DonorCatForm> {
                   },
                 ),
                 //Gender
-                TextFormField(
-                  controller: _genderController,
-                  decoration: InputDecoration(labelText: 'Gender'),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'please complete required fields';
-                    }
-                    return null;
-                  },
-                ),
                 InkWell(
+                  //InkWell added here
                   onTap: () {
                     showDialog(
                         context: context,
@@ -175,8 +181,9 @@ class _DonorCatFormState extends State<DonorCatForm> {
                         });
                   },
                   child: TextFormField(
-                    controller: _weightController,
-                    decoration: InputDecoration(labelText: 'Weight'),
+                    controller: _genderController,
+                    enabled: false, //disable manual input
+                    decoration: InputDecoration(labelText: 'Gender'),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'please complete required fields';
@@ -184,6 +191,17 @@ class _DonorCatFormState extends State<DonorCatForm> {
                       return null;
                     },
                   ),
+                ),
+                //Weight
+                TextFormField(
+                  controller: _weightController,
+                  decoration: InputDecoration(labelText: 'Weight'),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'please complete required fields';
+                    }
+                    return null;
+                  },
                 ),
               ],
             ),
@@ -195,9 +213,9 @@ class _DonorCatFormState extends State<DonorCatForm> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: NeumorphicButton(
-                  style: NeumorphicStyle(
-                    color: Theme.of(context).primaryColor,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),

@@ -1,7 +1,7 @@
-import 'package:adoptanddonate/screens/services/phoneauth_service.dart';
-import 'package:adoptanddonate/widgets/authentication/phone_auth_screen.dart';
-import 'package:adoptanddonate/widgets/authentication/email_auth_screen.dart';
-import 'package:adoptanddonate/widgets/authentication/google_auth.dart';
+import 'package:adoptanddonate_new/screens/services/phoneauth_service.dart';
+import 'package:adoptanddonate_new/widgets/authentication/email_auth_screen.dart';
+import 'package:adoptanddonate_new/widgets/authentication/google_auth.dart';
+import 'package:adoptanddonate_new/widgets/authentication/phone_auth_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
@@ -20,7 +20,9 @@ class AuthUi extends StatelessWidget {
           SizedBox(
             width: 220,
             child: ElevatedButton(
+
                 style: ElevatedButton.styleFrom(
+                  
                   backgroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
@@ -42,13 +44,21 @@ class AuthUi extends StatelessWidget {
           ),
           SignInButton(
             Buttons.Google,
-            text: "Sign up with Google",
+            text: "Continue with Google",
             onPressed: () async {
               User? user =
                   await GoogleAuthentication.signInWithGoogle(context: context);
+
               if (user != null) {
-                PhoneAuthService _authentication = PhoneAuthService();
-                _authentication.addUser(context, user.uid);
+                PhoneAuthService _authentication =
+                    PhoneAuthService(); // Renamed variable
+
+                // Get phone number and email from the user object
+                String? phoneNumber = user.phoneNumber;
+                String? email = user.email;
+
+                // Call addUser with all four arguments
+                _authentication.addUser(context, user.uid, phoneNumber, email);
               }
             },
           ),
@@ -60,23 +70,22 @@ class AuthUi extends StatelessWidget {
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-         InkWell(
-          onTap: (){
-            Navigator.pushNamed(context, EmailAuthScreen.id);
-          },
-           child: Container(
-             decoration:const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.white))),
-             child: const Text(
-              "Login with Email",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-               
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, EmailAuthScreen.id);
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Colors.white))),
+              child: const Text(
+                "Login with Email",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
               ),
             ),
-           ),
-         )
+          )
         ],
       ),
     );

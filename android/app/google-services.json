@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "598905427740",
-    "project_id": "adoptanddonate-6e5f8",
-    "storage_bucket": "adoptanddonate-6e5f8.firebasestorage.app"
+    "project_number": "890557884753",
+    "project_id": "pawpal-a7e0b",
+    "storage_bucket": "pawpal-a7e0b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:598905427740:android:0d974e2c94f828db7f8cd9",
+        "mobilesdk_app_id": "1:890557884753:android:789d71c932d7ff0061cb70",
         "android_client_info": {
-          "package_name": "com.example.adoptanddonate"
+          "package_name": "com.example.adoptanddonate_new"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAj55xcuMgZIpjbaeHfjzAFKn-M_oqS84w"
+          "current_key": "AIzaSyAE4QPUz6AmfRp6mCzPEmI2dkKzFDo9sFg"
         }
       ],
       "services": {

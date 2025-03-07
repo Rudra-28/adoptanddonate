@@ -1,5 +1,6 @@
-import 'package:adoptanddonate/screens/email_verification_screen.dart';
-import 'package:adoptanddonate/widgets/authentication/reset_password_screen.dart';
+import 'package:adoptanddonate_new/screens/email_verification_screen.dart';
+import 'package:adoptanddonate_new/screens/services/emailAuth_services.dart';
+import 'package:adoptanddonate_new/widgets/authentication/reset_password_screen.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,19 +18,30 @@ class EmailAuthScreen extends StatefulWidget {
 class _EmailAuthScreenState extends State<EmailAuthScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _validate = false;
-  final bool _login = true;
+  late bool _login = true;
   bool _loading = false;
 
   var _emailController = TextEditingController();
   var _passworController = TextEditingController();
 
-//EmailAuthentication _service = EmailAuthentication();
+  EmailauthServices _service = EmailauthServices();
 
   _validateEmail() {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _validate = false;
         _loading = true;
+      });
+
+      _service.getAdminCredential(
+        context: context, 
+        isLog: _login,
+        password: _passworController.text,
+        email: _emailController.text,
+      ).then((value) {
+        setState(() {
+          _loading = false;
+        });
       });
     }
   }
@@ -130,23 +142,33 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                     } else {
                       setState(() {
                         _validate = false;
-                      });
+                      },);
                     }
                   }
                 },
               ),
-              SizedBox(
-                height: 10,
+              SizedBox(height: 10,),
+              Row(
+                children: [
+                  Text(_login ? 'New Account ? ' : ' Already has an account'),
+                  TextButton(onPressed: (){
+                    setState(() {
+                      _login=!_login;
+                    });
+                  }, child:Text(_login? 'Register' : 'login', style:  TextStyle( color: Colors.black, fontWeight: FontWeight.bold)))
+                ],
               ),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, ResetPasswordScreen.id);
-                  },
-                  child: const Text(
-                    'forget password',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.amber),
-                  )),
+              
+              // TextButton(
+              //   onPressed: () {
+              //     Navigator.pushNamed(context, ResetPasswordScreen.id);
+              //   },
+              //   child: const Text(
+              //     'forget password',
+              //     style: TextStyle(
+              //         fontWeight: FontWeight.bold, color: Colors.amber),
+              //   ),
+              // ),
             ],
           ),
         ),

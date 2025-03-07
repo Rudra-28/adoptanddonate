@@ -1,4 +1,5 @@
-import 'package:adoptanddonate/screens/services/phoneauth_service.dart';
+import 'package:adoptanddonate_new/screens/services/phoneauth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:legacy_progress_dialog/legacy_progress_dialog.dart';
@@ -12,6 +13,7 @@ class PhoneAuthScreen extends StatefulWidget {
 }
 
 class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
+   String errorDI = ""; 
   bool validate = false;
 
   var countryCodeController = TextEditingController(text: '+91');
@@ -44,14 +46,13 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-      ProgressDialog progressDialog = ProgressDialog(
-                  context: context,
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black,
-                  loadingText: "Verifying number",
-                  progressIndicatorColor: Theme.of(context).primaryColor,
-                );
+    ProgressDialog progressDialog = ProgressDialog(
+      context: context,
+      backgroundColor: Colors.white,
+      textColor: Colors.black,
+      loadingText: "please wait",
+      progressIndicatorColor: Theme.of(context).primaryColor,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -150,14 +151,44 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                     ? WidgetStateProperty.all(Theme.of(context).primaryColor)
                     : WidgetStateProperty.all(Colors.grey),
               ),
-              onPressed: () {
-                progressDialog.show();
+            
+              onPressed: () async {
+                progressDialog.show(); 
+
                 String number =
                     '${countryCodeController.text}${phoneNumberController.text}';
-                _service.verifyPhoneNumber(context, number);
-                progressDialog.dismiss();
+                print(number);
+
+                try {
+                  await _service.verifyPhoneNumber(context, number);// Verification successful
+                  setState(() {
+                    validate = true;
+                  });
+                  // Navigate to the next screen or perform other actions
+                } on FirebaseAuthException catch (e) {
+                  // Handle Firebase errors
+                  print('Failed with error code: ${e.code}');
+                  print(e.message);
+                  setState(() {
+                    errorDI = e.message ??
+                        "Verification failed."; // Update error message
+                    validate = false; // Update button state
+                  });
+                  // Show an error message to the user (e.g., using a SnackBar)
+                } catch (e) {
+                  // Handle other errors
+                  print('Error during phone verification: $e');
+                  setState(() {
+                    errorDI = "Verification failed."; // Update error message
+                    validate = false; // Update button state
+                  });
+                  // Show an error message to the user
+                } finally {
+                  progressDialog.dismiss(); // Dismiss the dialog in any case
+                }
               },
               child: const Padding(
+                // Added child property
                 padding: EdgeInsets.all(12.0),
                 child: Text(
                   "Next",

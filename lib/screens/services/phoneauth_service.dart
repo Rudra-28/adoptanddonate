@@ -1,5 +1,5 @@
-import 'package:adoptanddonate/screens/location_screen.dart';
-import 'package:adoptanddonate/widgets/authentication/otp_screen.dart';
+import 'package:adoptanddonate_new/screens/location_screen.dart';
+import 'package:adoptanddonate_new/widgets/authentication/otp_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,51 +10,56 @@ class PhoneAuthService {
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  Future<void> addUser(BuildContext context, String uid) async {
-    //Check if the user exists
-    final QuerySnapshot result =
-        await users.where('uid', isEqualTo: uid).get();
+ Future<void> addUser(BuildContext context, String uid, String? phoneNumber, String? email) async {
+  print('addUser function called with UID: $uid');
+  // Check if the user exists
+  final QuerySnapshot result = await users.where('uid', isEqualTo: uid).get();
 
-    List<DocumentSnapshot> document = result.docs;
+  List <DocumentSnapshot> document = result.docs;
 
-    if (result.docs.isNotEmpty) {
+  if (result.docs.isNotEmpty) {
+    Navigator.pushReplacementNamed(context, LocationScreen.id);
+  } else {
+    return users
+        .doc(uid) // Use the passed-in uid
+        .set({
+      'uid': uid, // Use the passed-in uid
+      'mobile': phoneNumber, // Use the passed-in phoneNumber
+      'email': email, // Use the passed-in email
+    }).then((value) {
+      // Navigate to the next screen
       Navigator.pushReplacementNamed(context, LocationScreen.id);
-    } else {
-      return users
-          .doc(user!.uid) // Correct method call
-          .set({
-        'uid': user!.uid, // User ID
-        'mobile': user!.phoneNumber, // Mobile number
-        'email': user!.email, // Email address
-      }).then((value) {
-        // Navigate to the next screen
-        Navigator.pushReplacementNamed(context, LocationScreen.id);
-      }).catchError((error) {
-        print("Failed to add user: $error");
-        return Future.error(error); // Propagate the error if necessary
-      });
-    }
-    // Add user to Firestore
+    }).catchError((error) {
+      print("Failed to add user: $error");
+      return Future.error(error); // Propagate the error if necessary
+    });
   }
+  // Add user to Firestore
+}
 
   Future<void> verifyPhoneNumber(BuildContext context, number) async {
-    final PhoneVerificationCompleted;
+    final FirebaseAuth auth =
+        FirebaseAuth.instance; // Make sure auth is initialized
 
-    verificationCompleted(PhoneAuthCredential credential) async {
+    final PhoneVerificationCompleted verificationCompleted =
+        (PhoneAuthCredential credential) async {
       await auth.signInWithCredential(credential);
-    }
-
-    PhoneVerificationCompleted = verificationCompleted;
-
-    final PhoneVerificationFailed verificationFailed =
-        (FirebaseAuthException e) async {
-      if (e.code == 'invalid-phone-number') {
-        print("The provided phone number is not valid");
-      }
-      print('the error is ${e.code}');
     };
 
-    final PhoneCodeSent codeSent = (String verID, int? resendToken)async{
+    final PhoneVerificationFailed verificationFailed =
+        (FirebaseAuthException e) {
+      print('Failed with error code: ${e.code}');
+      print(e.message);
+      throw e; // Re-throw the exception to be handled by the caller
+    };
+
+    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
+      print('Auto retrieval timeout: $verificationId');
+      // Add your timeout handling logic here if needed
+    };
+
+    final PhoneCodeSent codeSent = (String verID, int? resendToken) async {
       Navigator.push<void>(
         context,
         MaterialPageRoute(
@@ -66,17 +71,22 @@ class PhoneAuthService {
     };
 
     try {
-      auth.verifyPhoneNumber(
-          phoneNumber: number,
-          verificationCompleted: verificationCompleted,
-          verificationFailed: verificationFailed,
-          codeSent: codeSent,
-          timeout: const Duration(seconds: 60),
-          codeAutoRetrievalTimeout: (String verificationId) {
-            print(verificationId);
-          });
+      await auth.verifyPhoneNumber(
+        phoneNumber: number,
+        verificationCompleted: verificationCompleted,
+        verificationFailed: verificationFailed,
+        codeSent: codeSent,
+        timeout: const Duration(seconds: 60),
+        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+      );
+    } on FirebaseAuthException catch (e) {
+      print('Failed with error code: ${e.code}');
+      print(e.message);
+      // Handle Firebase-specific errors here
+      // e.g., update errorDI and show a SnackBar
     } catch (e) {
-      print('error ${e.toString()}');
+      print('Error during phone verification: $e');
+      // Handle other errors here
     }
   }
 }

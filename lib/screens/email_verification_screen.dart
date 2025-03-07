@@ -79,7 +79,8 @@
 //     );
 //   }
 // }
-import 'package:adoptanddonate/screens/location_screen.dart';
+
+import 'package:adoptanddonate_new/screens/location_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
@@ -107,7 +108,7 @@ class EmailVerificationScreen extends StatelessWidget {
             
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, LocationScreen.id);
+               Navigator.pushReplacementNamed(context, LocationScreen.id);
               },
               child: const Text("Verify Email"),
             ),

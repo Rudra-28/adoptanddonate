@@ -1,4 +1,5 @@
-import 'package:adoptanddonate/widgets/authentication/email_auth_screen.dart';
+
+import 'package:adoptanddonate_new/widgets/authentication/email_auth_screen.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

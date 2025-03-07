@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '598905427740',
     projectId: 'adoptanddonate-6e5f8',
     storageBucket: 'adoptanddonate-6e5f8.firebasestorage.app',
-    iosBundleId: 'com.example.adoptanddonate',
+    iosBundleId: 'com.example.adoptanddonate_new',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '598905427740',
     projectId: 'adoptanddonate-6e5f8',
     storageBucket: 'adoptanddonate-6e5f8.firebasestorage.app',
-    iosBundleId: 'com.example.adoptanddonate',
+    iosBundleId: 'com.example.adoptanddonate_new',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

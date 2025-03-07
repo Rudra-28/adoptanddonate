@@ -1,10 +1,6 @@
-import 'package:adoptanddonate/screens/account_screen.dart';
-import 'package:adoptanddonate/screens/chat_screen.dart';
-import 'package:adoptanddonate/screens/donateanimal/donor_cat.dart';
-import 'package:adoptanddonate/screens/home_screen.dart';
-import 'package:adoptanddonate/screens/myAd_screen.dart';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
 class MainScreen extends StatefulWidget {
@@ -16,23 +12,23 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  Widget currentScreen = const HomeScreen(
-    locationData: LocationData,
-  );
+  // Widget currentScreen = const HomeScreen(
+  //   locationData: LocationData,
+  // );
   int _index = 0;
   final PageStorageBucket _bucket = PageStorageBucket();
   @override
   Widget build(BuildContext context) {
     Color color = Theme.of(context).primaryColor;
     return Scaffold(
-      body: PageStorage(
-        bucket: _bucket,
-        child: currentScreen,
-      ),
+      // body: PageStorage(
+      //   bucket: _bucket,
+      //  // child: currentScreen,
+      // ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.purple,
         onPressed: () {
-          Navigator.pushNamed(context,DonorCategory.id);
+         // Navigator.pushNamed(context,DonorCategory.id);
         },
         child: const CircleAvatar(
           backgroundColor: Colors.white,
@@ -54,10 +50,10 @@ class _MainScreenState extends State<MainScreen> {
                   MaterialButton(
                     minWidth: 40,
                     onPressed: () {
-                      setState(() {
-                        _index = 0;
-                        _currentScreen = HomeScreen(locationData: locationData);
-                      });
+                      // setState(() {
+                      //   _index = 0;
+                      //   _currentScreen = HomeScreen(locationData: locationData);
+                      // });
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -80,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
                     onPressed: () {
                       setState(() {
                         _index = 1;
-                        currentScreen =ChatScreen();
+                       // currentScreen =ChatScreen();
                       });
                     },
                     child: Column(
@@ -109,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
                     onPressed: () {
                       setState(() {
                         _index = 2;
-                        currentScreen =const MyAdScreen();
+                       // currentScreen =const MyAdScreen();
                       });
                     },
                     child: Column(
@@ -133,7 +129,7 @@ class _MainScreenState extends State<MainScreen> {
                     onPressed: () {
                       setState(() {
                         _index = 3;
-                        currentScreen =const AccountScreen();
+                       // currentScreen =const AccountScreen();
                       });
                     },
                     child: Column(

@@ -1,6 +1,6 @@
-import 'package:adoptanddonate/screens/location_screen.dart';
-import 'package:adoptanddonate/screens/services/phoneauth_service.dart';
-import 'package:adoptanddonate/widgets/authentication/phone_auth_screen.dart';
+import 'package:adoptanddonate_new/screens/location_screen.dart';
+import 'package:adoptanddonate_new/screens/services/phoneauth_service.dart';
+import 'package:adoptanddonate_new/widgets/authentication/phone_auth_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +11,7 @@ class OtpScreen extends StatefulWidget {
   
   final String number;
   final String verID;
-  const OtpScreen({super.key, required this.number, required this.verID});
+const OtpScreen({super.key, required this.number, required this.verID, });
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -31,35 +31,35 @@ class _OtpScreenState extends State<OtpScreen> {
   var _text6 = TextEditingController();
 
   Future<void> phoneCredential(
-    BuildContext context,
-    String otp,
-  ) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: widget.verID, smsCode: otp);
-      final User? user = (await auth.signInWithCredential(credential)).user;
+  BuildContext context,
+  String otp,
+) async {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  try {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verID, smsCode: otp);
+    final User? user = (await auth.signInWithCredential(credential)).user;
 
-      if (user != null) {
-        _services.addUser(context, user.uid);
-        // Navigator.pushReplacementNamed(context, LocationScreen.id);
-      } else {
-        print('Login Failed');
-        if(mounted){
-          setState(() {
-            error='login failed';
-          });
-        }
+    if (user != null) {
+      _services.addUser(context, user.uid, user.phoneNumber, user.email); //pass user data
+      Navigator.pushReplacementNamed(context, LocationScreen.id);
+    } else {
+      print('Login Failed');
+      if (mounted) {
+        setState(() {
+          error = 'login failed';
+        });
       }
-    } catch (e) {
-      print(e.toString());
-      if(mounted){
-          setState(() {
-            error='Invalid OTP';
-          });
-        }
+    }
+  } catch (e) {
+    print(e.toString());
+    if (mounted) {
+      setState(() {
+        error = 'Invalid OTP';
+      });
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +290,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
             ),
             SizedBox(height:10,),
-            Text(error!, style: const TextStyle(color: Colors.red,fontSize: 12),),
+            Text("error!", style: const TextStyle(color: Colors.red,fontSize: 12),),
 
           ],
         ),
