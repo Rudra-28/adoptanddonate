@@ -14,6 +14,7 @@ import 'package:adoptanddonate_new/widgets/authentication/phone_auth_screen.dart
 import 'package:adoptanddonate_new/widgets/authentication/email_auth_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/otp_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/reset_password_screen.dart';
+import 'package:adoptanddonate_new/widgets/banner_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         // DonorCategory.id: (context) => const DonorCategory(),
         DonorSubCat.id: (context) => const DonorSubCat(),
         DonorCatForm.id: (context) => DonorCatForm(),
+        BannerWidget.id: (context) =>BannerWidget(),
         HomeScreen.id: (context) => HomeScreen(
               locationData: LocationData.fromMap({
                 'latitude': 0.0,

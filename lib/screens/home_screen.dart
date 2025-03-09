@@ -1,4 +1,5 @@
 import 'package:adoptanddonate_new/timepass/adopter_app_bar.dart'; // Ensure correct import path!
+import 'package:adoptanddonate_new/widgets/banner_widget.dart';
 import 'package:adoptanddonate_new/widgets/category_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -9,9 +10,9 @@ class HomeScreen extends StatefulWidget {
   final LocationData locationData;
 
   const HomeScreen({
-    Key? key, // Added Key? key for consistency
+    super.key, // Added Key? key for consistency
     required this.locationData,
-  }) : super(key: key);
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -79,8 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
-      appBar: PreferredSize(preferredSize: Size.fromHeight(56), child: SafeArea(child: AdopterAppBar())),// Use AdopterAppBar directly
+      backgroundColor: Colors.white,
+      appBar:const PreferredSize(preferredSize: Size.fromHeight(56), child: SafeArea(child: AdopterAppBar())),// Use AdopterAppBar directly
       body: Column(
         children: [
           Container(
@@ -92,24 +93,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   Container(
                     color: Colors.white,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
                       child: Row(
                         children: [
                           Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(
-                                  Icons.search,
-                                ),
-                                labelText:
-                                    'Find Dogs, cats, parrots, cows, goats, tortoise and many more ',
-                                labelStyle: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                                contentPadding: const EdgeInsets.only(
-                                    left: 10, right: 10),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
+                            child: SizedBox(
+                              height: 40,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(
+                                    Icons.search,
+                                  ),
+                                  labelText:
+                                      'Find Dogs, cats, and many more ',
+                                  labelStyle: const TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                 ),
                               ),
                             ),
@@ -125,11 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                 const Padding(
+                    padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
                     child: Column(
                       children: [
-                        const CategoryWidget(),
+                        BannerWidget(),
+                        CategoryWidget(),
                       ],
                     ),
                   ),

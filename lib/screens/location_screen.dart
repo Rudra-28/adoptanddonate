@@ -14,6 +14,8 @@ import 'package:location/location.dart';
 class LocationScreen extends StatefulWidget {
   static const String id = 'location-screen';
 
+  
+
   const LocationScreen({super.key});
 
   @override
@@ -22,6 +24,7 @@ class LocationScreen extends StatefulWidget {
 
 class LocationScreenState extends State<LocationScreen> {
   Location location = Location();
+  late final bool locationChanging;
 
   FirebaseService _service = FirebaseService();
 
@@ -89,6 +92,15 @@ class LocationScreenState extends State<LocationScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    // if(widget.locationChanging==null){
+
+    // }else{
+    //   print("location not changinf");
+    // }
+
+
+
    // showBottomScreen(BuildContext context) {
       // getLocation().then((location) {
       //   if (location != null) {
