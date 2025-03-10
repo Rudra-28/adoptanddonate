@@ -1,6 +1,7 @@
-import 'package:adoptanddonate_new/timepass/adopter_app_bar.dart'; // Ensure correct import path!
+
 import 'package:adoptanddonate_new/widgets/banner_widget.dart';
 import 'package:adoptanddonate_new/widgets/category_widget.dart';
+import 'package:adoptanddonate_new/widgets/adopter_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart';
@@ -10,9 +11,9 @@ class HomeScreen extends StatefulWidget {
   final LocationData locationData;
 
   const HomeScreen({
-    super.key, // Added Key? key for consistency
+    Key? key, // Added Key? key for consistency
     required this.locationData,
-  });
+  }) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -81,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar:const PreferredSize(preferredSize: Size.fromHeight(56), child: SafeArea(child: AdopterAppBar())),// Use AdopterAppBar directly
+      appBar:PreferredSize(preferredSize: const Size.fromHeight(56), child: SafeArea(child: AdopterAppBar())),// Use AdopterAppBar directly
       body: Column(
         children: [
           Container(
@@ -134,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         BannerWidget(),
-                        CategoryWidget(),
+                        CategoryWidget()
                       ],
                     ),
                   ),

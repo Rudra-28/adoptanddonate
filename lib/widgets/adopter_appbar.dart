@@ -9,7 +9,7 @@ class AdopterAppBar extends StatefulWidget implements PreferredSizeWidget {
   const AdopterAppBar({Key? key}) : super(key: key);
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   _AdopterAppBarState createState() => _AdopterAppBarState();

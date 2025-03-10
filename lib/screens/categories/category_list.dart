@@ -29,7 +29,7 @@ class CategoryListScreen extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<QuerySnapshot>(
-        future: _service.categories.get(),
+        future: _service.categories.orderBy('catName', descending: false).get(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}')); // More specific error

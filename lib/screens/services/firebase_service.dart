@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,9 +11,9 @@ class FirebaseService {
   User? user = FirebaseAuth.instance.currentUser;
   
 
-  Future<void> updateUser(Map<String, dynamic> data, Function() onSuccess) { // Modified
+  Future<void> updateUser(BuildContext context, Map<String, dynamic> data, Function() onSuccess) { // Modified
     return users.doc(user!.uid).update(data).then((value) { // Use user!.uid
-      onSuccess(); // Execute the callback
+      Navigator.pushNamed(context, HomeScreen.id);// Execute the callback
     }).catchError((error) {
       print("Failed to update user: $error");
       return Future.error(error); // Return Future.error

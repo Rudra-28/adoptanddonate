@@ -1,20 +1,16 @@
-// import 'package:adoptanddonate/screens/home_screen.dart';
-// import 'package:adoptanddonate/screens/services/firebase_service.dart';
 import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
 import 'package:csc_picker/csc_picker.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:location/location.dart' as loc;
+
 import 'package:legacy_progress_dialog/legacy_progress_dialog.dart';
-import 'package:location_geocoder/geocoder.dart';
-import 'package:location_geocoder/location_geocoder.dart';
 import 'package:location/location.dart';
 
 class LocationScreen extends StatefulWidget {
   static const String id = 'location-screen';
-
-  
 
   const LocationScreen({super.key});
 
@@ -23,10 +19,10 @@ class LocationScreen extends StatefulWidget {
 }
 
 class LocationScreenState extends State<LocationScreen> {
-  Location location = Location();
-  late final bool locationChanging;
-
   FirebaseService _service = FirebaseService();
+  loc.Location location = loc.Location();
+
+  late final bool locationChanging;
 
   bool loading = false;
   bool _serviceEnabled = false;
@@ -39,47 +35,57 @@ class LocationScreenState extends State<LocationScreen> {
   String cityValue = "";
   String manualAddress = "";
 
-  Future<LocationData> getLocation() async {
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
+  Future<LocationData?> getLocation() async {
+    try {
+      _serviceEnabled = await location.serviceEnabled();
       if (!_serviceEnabled) {
-        throw Exception('Location services are disabled.');
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          throw Exception('Location services are disabled.');
+        }
       }
-    }
 
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        throw Exception('Location permissions are denied.');
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          throw Exception('Location permissions are denied.');
+        }
       }
+
+      _locationData = await location.getLocation();
+
+      if (_locationData != null) {
+        try {
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+            _locationData!.latitude!,
+            _locationData!.longitude!,
+          );
+
+          if (placemarks.isNotEmpty) {
+            Placemark place = placemarks.first;
+            setState(() {
+              _address =
+                  "${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+            });
+            debugPrint("Current Address: $_address");
+          }
+        } catch (e) {
+          // Handle potential errors in reverse geocoding
+          print("Error during reverse geocoding: $e");
+          // You might want to set a default address or show an error message.
+        }
+        return _locationData; // Return the LocationData
+      } else {
+        // Handle the case where _locationData is null
+        print("Location data is null!");
+        return null; // Explicitly return null
+      }
+    } catch (e) {
+      // Handle exceptions related to service or permissions
+      print("Error getting location: $e");
+      return null; // Return null in case of an error
     }
-
-    print(_locationData);
-
-    _locationData = await location.getLocation();
-
-    // Future<String> getAddressFromCoordinates(
-    //     double latitude, double longitude) async {
-    //   try {
-    //     List<Placemark> placemarks =
-    //         await placemarkFromCoordinates(latitude, longitude);
-    //     if (placemarks.isNotEmpty) {
-    //       Placemark place = placemarks[0];
-    //       String address =
-    //           '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.country}';
-    //       return address;
-    //     } else {
-    //       return 'Address not found';
-    //     }
-    //   } catch (e) {
-    //     print('Error getting address: $e');
-    //     return 'Error getting address';
-    //   }
-    // }
-
-    return _locationData!;
   }
 
   late ProgressDialog progressDialog = ProgressDialog(
@@ -89,175 +95,46 @@ class LocationScreenState extends State<LocationScreen> {
     loadingText: "Fetching location",
     progressIndicatorColor: Theme.of(context).primaryColor,
   );
+  void _navigateToManualLocationPage() async {
+    progressDialog.show();
+    try {
+      final locationData = await getLocation();
+      progressDialog.dismiss();
+
+      if (locationData != null && mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ManualLocationPage(
+              locationData: locationData,
+              onAddressChanged: (address) {
+                setState(() {
+                  _address = address;
+                });
+              },
+              getLocation: getLocation, // Pass the function here
+            ),
+          ),
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Could not retrieve location. Please try again."),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error getting location: $e');
+      if (mounted) {
+        progressDialog.dismiss();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    // if(widget.locationChanging==null){
-
-    // }else{
-    //   print("location not changinf");
-    // }
-
-
-
-   // showBottomScreen(BuildContext context) {
-      // getLocation().then((location) {
-      //   if (location != null) {
-      //     progressDialog.dismiss();
-      //     showModalBottomSheet(
-      //         isScrollControlled: true,
-      //         enableDrag: true,
-      //         context: context,
-      //         builder: (context) {
-      //           getLocation().then((location) {
-      //             progressDialog.dismiss();
-      //             showModalBottomSheet(
-      //               isScrollControlled: true,
-      //               enableDrag: true,
-      //               context: context,
-      //               builder: (context) {
-      //                 return Column(
-      //                   children: [
-      //                     SizedBox(
-      //                       height: 26,
-      //                     ),
-      //                     AppBar(
-      //                       automaticallyImplyLeading: false,
-      //                       iconTheme: const IconThemeData(
-      //                         color: Colors.black,
-      //                       ),
-      //                       // automaticallyImplyLeading: false,
-      //                       //iconTheme: const IconThemeData(color: Colors.black),
-      //                       elevation: 1,
-      //                       backgroundColor: Colors.white,
-      //                       title: Row(
-      //                         children: [
-      //                           IconButton(
-      //                             onPressed: () {
-      //                               Navigator.pop(context);
-      //                             },
-      //                             icon: const Icon(
-      //                               Icons.clear,
-      //                             ),
-      //                           ),
-      //                           const SizedBox(
-      //                             width: 10,
-      //                           ),
-      //                           const Text(
-      //                             'location',
-      //                             style: TextStyle(color: Colors.black),
-      //                           )
-      //                         ],
-      //                       ),
-      //                     ),
-      //                     Padding(
-      //                       padding: const EdgeInsets.all(8.0),
-      //                       child: Container(
-      //                         decoration: BoxDecoration(
-      //                           border: Border.all(),
-      //                           borderRadius: BorderRadius.circular(6),
-      //                         ),
-      //                         child: SizedBox(
-      //                           height: 40,
-      //                           child: TextFormField(
-      //                             decoration: InputDecoration(
-      //                               hintText:
-      //                                   'Search City, area or neighborhood',
-      //                               hintStyle: TextStyle(color: Colors.grey),
-      //                               icon: Icon(Icons.search),
-      //                             ),
-      //                           ),
-      //                         ),
-      //                       ),
-      //                     ),
-      //                     ListTile(
-      //                       onTap: () {},
-      //                       horizontalTitleGap: 0.0,
-      //                       leading: Icon(
-      //                         Icons.my_location,
-      //                         color: Colors.blue,
-      //                       ),
-      //                       title: Text(
-      //                         "use current location",
-      //                         style: TextStyle(
-      //                             color: Colors.blue,
-      //                             fontWeight: FontWeight.bold),
-      //                       ),
-      //                       subtitle: Text(
-      //                         location == null ? 'Enable location' : _address!,
-      //                         style: TextStyle(fontSize: 12),
-      //                       ),
-      //                     ),
-      //                     Container(
-      //                       width: MediaQuery.of(context).size.width,
-      //                       color: Colors.grey.shade300,
-      //                       child: Padding(
-      //                         padding: const EdgeInsets.only(
-      //                             left: 10, bottom: 4, top: 4),
-      //                         child: Text(
-      //                           "CHOOSE CITY",
-      //                           style: TextStyle(
-      //                             color: Colors.blueGrey.shade100,
-      //                             fontSize: 12,
-      //                           ),
-      //                         ),
-      //                       ),
-      //                     ),
-      //                     Padding(
-      //                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      //                       child: CSCPicker(
-      //                         //defaultCountry: DefaultCountry.India,
-      //                         layout: Layout.vertical,
-      //                         dropdownDecoration: BoxDecoration(
-      //                           shape: BoxShape.rectangle,
-      //                         ),
-
-      //                         onCountryChanged: (value) {
-      //                           setState(() {
-      //                             countryValue = value;
-      //                           });
-      //                         },
-      //                         onStateChanged: (value) {
-      //                           setState(() {
-      //                             stateValue = value!;
-      //                           });
-      //                         },
-      //                         onCityChanged: (value) {
-      //                           setState(
-      //                             () {
-      //                               setState(() {
-      //                                 cityValue = value!;
-      //                                 _address =
-      //                                     '$cityValue, $stateValue, ${countryValue}';
-      //                               });
-
-      //                               print(Address);
-      //                               _service.updateUser({}, () {
-      //                                 // Pass a callback
-      //                                 if (mounted) {
-      //                                   Navigator.pushNamed(
-      //                                       context, HomeScreen.id);
-      //                                 }
-      //                               });
-      //                             },
-      //                           );
-      //                           debugPrint(_address);
-      //                         },
-      //                       ),
-      //                     ),
-      //                   ],
-      //                 );
-      //               },
-      //             );
-      //           });
-      //         });
-      //   } else {
-      //     progressDialog.dismiss();
-      //   }
-      // });
-    //}
-
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -297,7 +174,7 @@ class LocationScreenState extends State<LocationScreen> {
                               loading = true;
                             });
                             try {
-                              LocationData value = await getLocation();
+                              loc.LocationData? value = await getLocation();
                               if (value != null) {
                                 Navigator.pushReplacement(
                                   context,
@@ -333,19 +210,16 @@ class LocationScreenState extends State<LocationScreen> {
             ),
           ),
           InkWell(
-            onTap: () {
-              progressDialog.show();
-             // showBottomScreen(context);
-            },
+            onTap: _navigateToManualLocationPage,
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Container(
                 decoration:
-                    BoxDecoration(border: Border(bottom: BorderSide(width: 8))),
+                    BoxDecoration(border: Border(bottom: BorderSide(width: 2))),
                 child: Text(
                   "Set location manually",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                     fontSize: 20,
                   ),
                 ),
@@ -353,6 +227,269 @@ class LocationScreenState extends State<LocationScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ManualLocationPage extends StatefulWidget {
+  final LocationData locationData;
+  final Function(String) onAddressChanged;
+  final Future<LocationData?> Function() getLocation; // Passed function
+
+  ManualLocationPage({
+    required this.locationData,
+    required this.onAddressChanged,
+    required this.getLocation,
+  });
+
+  @override
+  _ManualLocationPageState createState() => _ManualLocationPageState();
+}
+
+class _ManualLocationPageState extends State<ManualLocationPage> {
+  LocationData? location; // location variable
+  String countryValue = "";
+  String stateValue = "";
+  String cityValue = "";
+  String _address = "";
+  FirebaseService _service = FirebaseService(); // You might need this
+
+  @override
+  void initState() {
+    super.initState();
+    location = widget.locationData; // Initialize location
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Set Location Manually'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: SizedBox(
+                  height: 40,
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'Search City, area or neighborhood',
+                      hintStyle: TextStyle(color: Colors.grey),
+                      icon: Icon(Icons.search),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            ListTile(
+              onTap: () async {
+                setState(() {
+                  location =
+                      null; // Reset location to trigger "Fetching location"
+                  _address = ''; // Clear the address
+                });
+
+                final locationData =
+                    await widget.getLocation(); // Use passed function
+
+                if (locationData != null) {
+                  try {
+                    List<Placemark> placemarks = await placemarkFromCoordinates(
+                      locationData.latitude!,
+                      locationData.longitude!,
+                    );
+
+                    if (placemarks.isNotEmpty) {
+                      Placemark place = placemarks.first;
+                      String fullAddress =
+                          "${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+                      setState(() {
+                        location = locationData; // Update location
+                        _address = fullAddress; // Update address
+                      });
+                      widget.onAddressChanged(fullAddress);
+                    } else {
+                      setState(() {
+                        location = locationData; // Update location
+                        _address =
+                            "${locationData.latitude}, ${locationData.longitude}"; // Revert to coordinates
+                      });
+                      widget.onAddressChanged(
+                          "${locationData.latitude}, ${locationData.longitude}");
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text("No address found for these coordinates."),
+                          ),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    setState(() {
+                      location = locationData; // Update location
+                      _address =
+                          "${locationData.latitude}, ${locationData.longitude}"; // Revert to coordinates
+                    });
+                    widget.onAddressChanged(
+                        "${locationData.latitude}, ${locationData.longitude}");
+                    print("Error fetching address: $e");
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Error fetching address."),
+                        ),
+                      );
+                    }
+                  }
+                } else {
+                  setState(() {
+                    location = null; // Set location to null to indicate error
+                    _address = "Could not get location";
+                  });
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text("Could not get location. Please try again."),
+                      ),
+                    );
+                  }
+                }
+              },
+              horizontalTitleGap: 0.0,
+              leading: const Icon(
+                Icons.my_location,
+                color: Colors.blue,
+              ),
+              title: const Text(
+                "Use current location",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                location == null ? 'Fetching location' : _address,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              color: Colors.grey.shade300,
+              child: const Padding(
+                padding: EdgeInsets.only(left: 10, bottom: 4, top: 4),
+                child: Text(
+                  "CHOOSE CITY",
+                  style: TextStyle(
+                    color: Colors.blueGrey,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (countryValue.isNotEmpty)
+                    Text(
+                      'Country: $countryValue   ',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  if (stateValue.isNotEmpty)
+                    Text(
+                      'State: $stateValue   ',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  if (cityValue.isNotEmpty)
+                    Text(
+                      'City: $cityValue',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: CSCPicker(
+                layout: Layout.vertical,
+                dropdownDecoration: const BoxDecoration(
+                  shape: BoxShape.rectangle,
+                ),
+                selectedItemStyle: const TextStyle(color: Colors.black),
+                onCountryChanged: (value) {
+                  setState(() {
+                    countryValue = value;
+                    debugPrint("Selected Country: $countryValue");
+                  });
+                },
+                onStateChanged: (value) {
+                  setState(() {
+                    stateValue = value ?? "";
+                    debugPrint("Selected State: $stateValue");
+                  });
+                },
+                onCityChanged: (value) {
+                  setState(() {
+                    cityValue = value ?? "";
+                    if (cityValue.isNotEmpty && stateValue.isNotEmpty) {
+                      _address = '$cityValue, $stateValue, $countryValue';
+                      widget.onAddressChanged(_address);
+                      debugPrint("Selected Address: $_address");
+                    }
+                  });
+                  try {
+                    // Explicitly type the map
+                    Map<String, dynamic> userData = {
+                      'address': _address,
+                      'state': stateValue,
+                      'city': cityValue,
+                      'country': countryValue,
+                    };
+
+                    _service.updateUser(
+                      context,
+                      userData, // Pass the explicitly typed map
+                      () {
+                        if (mounted) {
+                          Navigator.pushNamed(context, HomeScreen.id);
+                        }
+                      },
+                    );
+                  } catch (e) {
+                    print("Error updating user: $e");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Failed to update location: $e")),
+                    );
+                  }
+                },
+              ),
+            ),
+            if (_address.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  'Selected Address: $_address',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

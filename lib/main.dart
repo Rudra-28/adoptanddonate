@@ -54,9 +54,9 @@ class MyApp extends StatelessWidget {
         EmailAuthScreen.id: (context) => const EmailAuthScreen(),
         CategoryListScreen.id: (context) => const CategoryListScreen(),
         SubCatList.id: (context) => const SubCatList(),
-        MainScreen.id: (context) => const MainScreen(),
-        // DonorCategory.id: (context) => const DonorCategory(),
-        DonorSubCat.id: (context) => const DonorSubCat(),
+       // MainScreen.id: (context) => const MainScreen(),
+        DonorCategoryListScreen.id: (context)=> const DonorCategoryListScreen(),
+        DonorSubCategoryList.id: (context) => const DonorSubCategoryList(),
         DonorCatForm.id: (context) => DonorCatForm(),
         BannerWidget.id: (context) =>BannerWidget(),
         HomeScreen.id: (context) => HomeScreen(

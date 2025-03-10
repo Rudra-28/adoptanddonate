@@ -1,13 +1,11 @@
-
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
-class DonorSubCat extends StatelessWidget {
-  static const String id = "donor-subcat-screen";
-  const DonorSubCat({super.key});
+class DonorSubCategoryList extends StatelessWidget {
+  static const String id = "donor-subcat-list";
+  const DonorSubCategoryList({super.key});
 
   @override
   Widget build(BuildContext context) {
