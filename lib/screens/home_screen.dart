@@ -11,9 +11,9 @@ class HomeScreen extends StatefulWidget {
   final LocationData locationData;
 
   const HomeScreen({
-    Key? key, // Added Key? key for consistency
+    super.key, // Added Key? key for consistency
     required this.locationData,
-  }) : super(key: key);
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

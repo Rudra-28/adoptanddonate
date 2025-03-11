@@ -9,6 +9,7 @@ import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:adoptanddonate_new/screens/location_screen.dart';
 import 'package:adoptanddonate_new/screens/login_screen.dart';
 import 'package:adoptanddonate_new/screens/main_screen.dart';
+
 import 'package:adoptanddonate_new/screens/splash_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/phone_auth_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/email_auth_screen.dart';
@@ -50,11 +51,11 @@ class MyApp extends StatelessWidget {
         EmailVerificationScreen.id: (context) => EmailVerificationScreen(),
         LoginScreen.id: (context) => const LoginScreen(),
         PhoneAuthScreen.id: (context) => const PhoneAuthScreen(),
-        LocationScreen.id: (context) => const LocationScreen(),
+        LocationScreen.id: (context) => const LocationScreen(locationChanging: null,),
         EmailAuthScreen.id: (context) => const EmailAuthScreen(),
         CategoryListScreen.id: (context) => const CategoryListScreen(),
         SubCatList.id: (context) => const SubCatList(),
-       // MainScreen.id: (context) => const MainScreen(),
+        MainScreen.id: (context) => const MainScreen(),
         DonorCategoryListScreen.id: (context)=> const DonorCategoryListScreen(),
         DonorSubCategoryList.id: (context) => const DonorSubCategoryList(),
         DonorCatForm.id: (context) => DonorCatForm(),

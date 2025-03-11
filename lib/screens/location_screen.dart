@@ -1,28 +1,31 @@
 import 'package:adoptanddonate_new/screens/home_screen.dart';
+import 'package:adoptanddonate_new/screens/main_screen.dart';
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:location/location.dart' as loc;
-
 import 'package:legacy_progress_dialog/legacy_progress_dialog.dart';
 import 'package:location/location.dart';
 
 class LocationScreen extends StatefulWidget {
   static const String id = 'location-screen';
+  
+  final dynamic locationChanging;
 
-  const LocationScreen({super.key});
-
+ 
+  const LocationScreen({super.key, required this.locationChanging}); // Update constructor
   @override
   LocationScreenState createState() => LocationScreenState();
 }
 
 class LocationScreenState extends State<LocationScreen> {
-  FirebaseService _service = FirebaseService();
   loc.Location location = loc.Location();
+   FirebaseService _service = FirebaseService();
 
-  late final bool locationChanging;
+  late final bool locationChanging=false;
 
   bool loading = false;
   bool _serviceEnabled = false;
@@ -34,6 +37,7 @@ class LocationScreenState extends State<LocationScreen> {
   String stateValue = "";
   String cityValue = "";
   String manualAddress = "";
+
 
   Future<LocationData?> getLocation() async {
     try {
@@ -135,6 +139,22 @@ class LocationScreenState extends State<LocationScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+if (widget.locationChanging == null) { // Assuming locationChanging is a boolean
+  _service.users.doc(_service.user!.uid).get().then((DocumentSnapshot document) {
+    if (document.exists) {
+      if (document["address"] != null) {
+        if (mounted) {
+          print("entering main screen");
+          Navigator.pushReplacementNamed(context, MainScreen.id);
+        }
+      } else {
+       Navigator.pushNamed(context, LocationScreen.id);
+      }
+    }
+  });
+}
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -248,7 +268,7 @@ class ManualLocationPage extends StatefulWidget {
 }
 
 class _ManualLocationPageState extends State<ManualLocationPage> {
-  LocationData? location; // location variable
+  LocationData? location;
   String countryValue = "";
   String stateValue = "";
   String cityValue = "";
@@ -258,7 +278,28 @@ class _ManualLocationPageState extends State<ManualLocationPage> {
   @override
   void initState() {
     super.initState();
-    location = widget.locationData; // Initialize location
+    location = widget.locationData;
+  }
+
+  // Separate function for updating location and navigating
+  void _updateUserLocationAndNavigate(
+      BuildContext context, Map<String, dynamic> userData) {
+    try {
+      _service.updateUser(
+        context,
+        userData,
+        () {
+          if (mounted) {
+            Navigator.pushNamed(context, HomeScreen.id);
+          }
+        },
+      );
+    } catch (e) {
+      print("Error updating user: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to update location: $e")),
+      );
+    }
   }
 
   @override
@@ -293,13 +334,11 @@ class _ManualLocationPageState extends State<ManualLocationPage> {
             ListTile(
               onTap: () async {
                 setState(() {
-                  location =
-                      null; // Reset location to trigger "Fetching location"
-                  _address = ''; // Clear the address
+                  location = null;
+                  _address = '';
                 });
 
-                final locationData =
-                    await widget.getLocation(); // Use passed function
+                final locationData = await widget.getLocation();
 
                 if (locationData != null) {
                   try {
@@ -313,18 +352,36 @@ class _ManualLocationPageState extends State<ManualLocationPage> {
                       String fullAddress =
                           "${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
                       setState(() {
-                        location = locationData; // Update location
-                        _address = fullAddress; // Update address
+                        location = locationData;
+                        _address = fullAddress;
                       });
                       widget.onAddressChanged(fullAddress);
+
+                      // Update Firestore and navigate
+                      Map<String, dynamic> userData = {
+                        'address': _address,
+                        'location': GeoPoint(
+                            locationData.latitude!, locationData.longitude!),
+                      };
+                      _updateUserLocationAndNavigate(
+                          context, userData); // Call the function here
                     } else {
                       setState(() {
-                        location = locationData; // Update location
+                        location = locationData;
                         _address =
-                            "${locationData.latitude}, ${locationData.longitude}"; // Revert to coordinates
+                            "${locationData.latitude}, ${locationData.longitude}";
                       });
                       widget.onAddressChanged(
                           "${locationData.latitude}, ${locationData.longitude}");
+                      // Update Firestore and navigate
+                      Map<String, dynamic> userData = {
+                        'address': _address,
+                        'location': GeoPoint(
+                            locationData.latitude!, locationData.longitude!),
+                      };
+                      _updateUserLocationAndNavigate(
+                          context, userData); // Call the function here
+
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -336,12 +393,21 @@ class _ManualLocationPageState extends State<ManualLocationPage> {
                     }
                   } catch (e) {
                     setState(() {
-                      location = locationData; // Update location
+                      location = locationData;
                       _address =
-                          "${locationData.latitude}, ${locationData.longitude}"; // Revert to coordinates
+                          "${locationData.latitude}, ${locationData.longitude}";
                     });
                     widget.onAddressChanged(
                         "${locationData.latitude}, ${locationData.longitude}");
+                    // Update Firestore and navigate
+                    Map<String, dynamic> userData = {
+                      'address': _address,
+                      'location': GeoPoint(
+                          locationData.latitude!, locationData.longitude!),
+                    };
+                    _updateUserLocationAndNavigate(
+                        context, userData); // Call the function here
+
                     print("Error fetching address: $e");
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -353,7 +419,7 @@ class _ManualLocationPageState extends State<ManualLocationPage> {
                   }
                 } else {
                   setState(() {
-                    location = null; // Set location to null to indicate error
+                    location = null;
                     _address = "Could not get location";
                   });
                   if (mounted) {
@@ -456,17 +522,13 @@ class _ManualLocationPageState extends State<ManualLocationPage> {
                       'state': stateValue,
                       'city': cityValue,
                       'country': countryValue,
+                      'location': location != null
+                          ? GeoPoint(location!.latitude!, location!.longitude!)
+                          : null,
                     };
 
-                    _service.updateUser(
-                      context,
-                      userData, // Pass the explicitly typed map
-                      () {
-                        if (mounted) {
-                          Navigator.pushNamed(context, HomeScreen.id);
-                        }
-                      },
-                    );
+                    _updateUserLocationAndNavigate(
+                        context, userData); // Call only from onCityChanged
                   } catch (e) {
                     print("Error updating user: $e");
                     ScaffoldMessenger.of(context).showSnackBar(
