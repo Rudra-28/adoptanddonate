@@ -1,4 +1,6 @@
+import 'package:adoptanddonate_new/forms/donor_bird_form.dart';
 import 'package:adoptanddonate_new/forms/donor_cat_form.dart';
+import 'package:adoptanddonate_new/forms/donor_dog_form.dart';
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/screens/categories/category_list.dart';
 import 'package:adoptanddonate_new/screens/categories/subcat_screen.dart';
@@ -9,7 +11,6 @@ import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:adoptanddonate_new/screens/location_screen.dart';
 import 'package:adoptanddonate_new/screens/login_screen.dart';
 import 'package:adoptanddonate_new/screens/main_screen.dart';
-
 import 'package:adoptanddonate_new/screens/splash_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/phone_auth_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/email_auth_screen.dart';
@@ -59,6 +60,8 @@ class MyApp extends StatelessWidget {
         DonorCategoryListScreen.id: (context)=> const DonorCategoryListScreen(),
         DonorSubCategoryList.id: (context) => const DonorSubCategoryList(),
         DonorCatForm.id: (context) => DonorCatForm(),
+        DonorBirdForm.id: (context) => DonorBirdForm(),
+        DonorDogForm.id: (context)=> DonorDogForm(),
         BannerWidget.id: (context) =>BannerWidget(),
         HomeScreen.id: (context) => HomeScreen(
               locationData: LocationData.fromMap({

@@ -1,20 +1,17 @@
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
-import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
-import 'package:adoptanddonate_new/widgets/imagePicker_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class DonorCatForm extends StatefulWidget {
-  DonorCatForm({super.key});
-  static const String id = "cat-form";
+class DonorBirdForm extends StatefulWidget {
+  DonorBirdForm({super.key});
+  static const String id = "bird-form";
 
   @override
-  State<DonorCatForm> createState() => _DonorCatFormState();
+  State<DonorBirdForm> createState() => _DonorBirdFormState();
 }
 
-class _DonorCatFormState extends State<DonorCatForm> {
-  FirebaseService _service= FirebaseService();
+class _DonorBirdFormState extends State<DonorBirdForm> {
   final _formKey = GlobalKey<FormState>();
 
   var _breedController = TextEditingController();
@@ -22,9 +19,6 @@ class _DonorCatFormState extends State<DonorCatForm> {
   var _genderController = TextEditingController();
   var _weightController = TextEditingController();
   var _natureController = TextEditingController();
-  var _addressController= TextEditingController();
-
- String _address='';
 
   validate() {
     if (_formKey.currentState!.validate()) {
@@ -40,15 +34,6 @@ class _DonorCatFormState extends State<DonorCatForm> {
     'Cautious',
     'Aggressive'
   ];
-
- void intiState(){
-    _service.getUserData().then((value)=>{
-    setState(() {
-    _addressController.text= value['address'];
-    })
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,18 +90,17 @@ class _DonorCatFormState extends State<DonorCatForm> {
               Expanded(
                 child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: _catProvider.doc['subCat'].length,
+                    itemCount: list.length,
                     itemBuilder: (BuildContext context, int index) {
                       print('building list item $index');
                       return ListTile(
-                        title: Text(_catProvider.doc['subCat'][index]),
                         onTap: () {
                           setState(() {
-                           _breedController.text= _catProvider.doc['subCat'][index];
+                            textController.text = list[index];
                           });
                           Navigator.pop(context);
                         },
-                       
+                        title: Text(list[index]),
                       );
                     }),
               )
@@ -219,63 +203,11 @@ class _DonorCatFormState extends State<DonorCatForm> {
                     return null;
                   },
                 ),
-                   InkWell(
-                  //InkWell added here
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return _listview(
-                              FieldValue: 'Nature',
-                              list: _natureList,
-                              textController: _natureController);
-                        });
-                  },
-                  child: TextFormField(
-                    controller: _natureController,
-                    enabled: false, //disable manual input
-                    decoration: InputDecoration(labelText: 'Nature'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'please complete required fields';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                //Age
-                TextFormField(
-                  enabled: false,
-                  minLines: 2,
-                  maxLines: 4,
-                  controller: _addressController,
-                  decoration: InputDecoration(labelText: 'Seller Address', counterText: 'Donor Address'),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'please complete required fields';
-                    }
-                    return null;
-                  },
-                ), 
-                InkWell(
-                  onTap: (){
-                    showDialog(context: context, builder: (BuildContext){
-                      return ImagePickerWidget();
-                    });
-                  },
-                  child: Container(
-                    height: 40,
-                    child: Center(
-                      child: Text("upload image"),
-                    ),
-                  ),
-                )
               ],
             ),
           ),
         ),
       ),
-    
       bottomSheet: Row(
         children: [
           Expanded(

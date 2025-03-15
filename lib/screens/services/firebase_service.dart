@@ -38,4 +38,9 @@ class FirebaseService {
       return "Error getting address";
     }
   }
+
+  Future<DocumentSnapshot>getUserData()async {
+    DocumentSnapshot doc= await users.doc(user?.uid).get();
+    return doc;
+  }
 }
