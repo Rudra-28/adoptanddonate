@@ -25,7 +25,9 @@ class PhoneAuthService {
         .set({
       'uid': uid, // Use the passed-in uid
       'mobile': phoneNumber, // Use the passed-in phoneNumber
-      'email': email, // Use the passed-in email
+      'email': email,
+      'name':null,
+      'address':null,
     }).then((value) {
       // Navigate to the next screen
       Navigator.pushReplacementNamed(context, LocationScreen.id);
@@ -34,12 +36,12 @@ class PhoneAuthService {
       return Future.error(error); // Propagate the error if necessary
     });
   }
-  // Add user to Firestore
+ 
 }
 
   Future<void> verifyPhoneNumber(BuildContext context, number) async {
     final FirebaseAuth auth =
-        FirebaseAuth.instance; // Make sure auth is initialized
+        FirebaseAuth.instance;
 
     final PhoneVerificationCompleted verificationCompleted =
         (PhoneAuthCredential credential) async {
@@ -50,7 +52,7 @@ class PhoneAuthService {
         (FirebaseAuthException e) {
       print('Failed with error code: ${e.code}');
       print(e.message);
-      throw e; // Re-throw the exception to be handled by the caller
+      throw e; 
     };
 
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =

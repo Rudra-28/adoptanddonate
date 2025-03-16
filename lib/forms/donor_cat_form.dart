@@ -1,8 +1,12 @@
+import 'dart:developer';
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
+import 'package:adoptanddonate_new/forms/user_review_screen.dart';
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
 import 'package:adoptanddonate_new/widgets/imagePicker_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:galleryimage/galleryimage.dart';
+import 'package:location_geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 
 class DonorCatForm extends StatefulWidget {
@@ -14,7 +18,7 @@ class DonorCatForm extends StatefulWidget {
 }
 
 class _DonorCatFormState extends State<DonorCatForm> {
-  FirebaseService _service= FirebaseService();
+  FirebaseService _service = FirebaseService();
   final _formKey = GlobalKey<FormState>();
 
   var _breedController = TextEditingController();
@@ -22,13 +26,42 @@ class _DonorCatFormState extends State<DonorCatForm> {
   var _genderController = TextEditingController();
   var _weightController = TextEditingController();
   var _natureController = TextEditingController();
-  var _addressController= TextEditingController();
 
- String _address='';
+  String _address = '';
 
-  validate() {
+  validate(CategoryProvider provider) {
     if (_formKey.currentState!.validate()) {
-      print("validated");
+      if (provider.urlList.isNotEmpty) {
+        provider.datatofirestore.addAll({
+          'category': {
+            'category': provider.selectedCategory,
+            'subCat': provider.selectedSubCat,
+            'breed': _breedController.text,
+            'age': _ageController.text,
+            'gender': _genderController.text,
+            'weight': _weightController.text,
+            'nature': _natureController.text,
+            'donorUid': _service.user!.uid,
+            'images': provider.urlList,
+          }
+        });
+
+
+        print(provider.datatofirestore);
+        Navigator.pushNamed(context, UserReviewScreen.id);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("images not found"),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("please complete required fields"),
+        ),
+      );
     }
   }
 
@@ -40,15 +73,29 @@ class _DonorCatFormState extends State<DonorCatForm> {
     'Cautious',
     'Aggressive'
   ];
+@override
+void didChangeDependencies() {
+  var _catProvider = Provider.of<CategoryProvider>(context);
 
- void intiState(){
-    _service.getUserData().then((value)=>{
-    setState(() {
-    _addressController.text= value['address'];
-    })
-    });
-    super.initState();
-  }
+  setState(() {
+    _breedController.text = _catProvider.datatofirestore.isEmpty
+        ? '' 
+        : _catProvider.datatofirestore['breed'] ?? ''; 
+    _ageController.text = _catProvider.datatofirestore.isEmpty
+        ? ''
+        : _catProvider.datatofirestore['age'] ?? '';
+    _weightController.text = _catProvider.datatofirestore.isEmpty
+        ? ''
+        : _catProvider.datatofirestore['weight'] ?? '';
+    _genderController.text = _catProvider.datatofirestore.isEmpty
+        ? ''
+        : _catProvider.datatofirestore['gender'] ?? '';
+    _natureController.text = _catProvider.datatofirestore.isEmpty
+        ? ''
+        : _catProvider.datatofirestore['nature'] ?? '';
+  });
+  super.didChangeDependencies();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -112,11 +159,11 @@ class _DonorCatFormState extends State<DonorCatForm> {
                         title: Text(_catProvider.doc['subCat'][index]),
                         onTap: () {
                           setState(() {
-                           _breedController.text= _catProvider.doc['subCat'][index];
+                            _breedController.text =
+                                _catProvider.doc['subCat'][index];
                           });
                           Navigator.pop(context);
                         },
-                       
                       );
                     }),
               )
@@ -219,7 +266,7 @@ class _DonorCatFormState extends State<DonorCatForm> {
                     return null;
                   },
                 ),
-                   InkWell(
+                InkWell(
                   //InkWell added here
                   onTap: () {
                     showDialog(
@@ -243,30 +290,36 @@ class _DonorCatFormState extends State<DonorCatForm> {
                     },
                   ),
                 ),
-                //Age
-                TextFormField(
-                  enabled: false,
-                  minLines: 2,
-                  maxLines: 4,
-                  controller: _addressController,
-                  decoration: InputDecoration(labelText: 'Seller Address', counterText: 'Donor Address'),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'please complete required fields';
-                    }
-                    return null;
-                  },
-                ), 
+                if (_catProvider.urlList
+                    .isNotEmpty) 
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: GalleryImage(
+                      imageUrls: _catProvider.urlList,
+                      numOfShowImages:
+                          _catProvider.urlList.length,
+                    ),
+                  ),
+                SizedBox(
+                  height: 20,
+                ),
                 InkWell(
-                  onTap: (){
-                    showDialog(context: context, builder: (BuildContext){
-                      return ImagePickerWidget();
-                    });
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext) {
+                          return ImagePickerWidget();
+                        });
                   },
                   child: Container(
                     height: 40,
                     child: Center(
-                      child: Text("upload image"),
+                      child: Text(_catProvider.urlList.length > 0
+                          ? "upload images"
+                          : "upload image"),
                     ),
                   ),
                 )
@@ -275,7 +328,6 @@ class _DonorCatFormState extends State<DonorCatForm> {
           ),
         ),
       ),
-    
       bottomSheet: Row(
         children: [
           Expanded(
@@ -297,7 +349,8 @@ class _DonorCatFormState extends State<DonorCatForm> {
                     ),
                   ),
                   onPressed: () {
-                    validate();
+                    validate(_catProvider);
+                    print(_catProvider.datatofirestore);
                   }),
             ),
           ),

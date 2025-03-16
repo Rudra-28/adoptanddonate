@@ -2,6 +2,7 @@ import 'package:adoptanddonate_new/forms/donor_bird_form.dart';
 import 'package:adoptanddonate_new/forms/donor_cat_form.dart';
 import 'package:adoptanddonate_new/forms/donor_dog_form.dart';
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
+import 'package:adoptanddonate_new/forms/user_review_screen.dart';
 import 'package:adoptanddonate_new/screens/categories/category_list.dart';
 import 'package:adoptanddonate_new/screens/categories/subcat_screen.dart';
 import 'package:adoptanddonate_new/screens/donateanimal/donor_cat.dart';
@@ -62,7 +63,8 @@ class MyApp extends StatelessWidget {
         DonorCatForm.id: (context) => DonorCatForm(),
         DonorBirdForm.id: (context) => DonorBirdForm(),
         DonorDogForm.id: (context)=> DonorDogForm(),
-        BannerWidget.id: (context) =>BannerWidget(),
+        BannerWidget.id: (context) =>const BannerWidget(),
+        UserReviewScreen.id: (context) =>const UserReviewScreen(),
         HomeScreen.id: (context) => HomeScreen(
               locationData: LocationData.fromMap({
                 'latitude': 0.0,
@@ -81,37 +83,4 @@ class MyApp extends StatelessWidget {
       },
     );
   }
-  //FutureBuilder(
-  //     future: Future.delayed(const Duration(seconds: 1)),
-  //     builder: (context, AsyncSnapshot snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return MaterialApp(
-  //             debugShowCheckedModeBanner: false,
-  //             theme: ThemeData(
-  //               primaryColor: Colors.cyan.shade900,
-  //             ),
-  //             home: const SplashScreen());
-  //       } else {
-  //         return MaterialApp(
-  //           debugShowCheckedModeBanner: false,
-  //           theme: ThemeData(
-  //             primaryColor: Colors.cyan.shade900,
-  //           ),
-  //           home: const LoginScreen(),
-  //           routes: {
-  //             LoginScreen.id: (context) => const LoginScreen(),
-  //             PhoneAuthScreen.id: (context) => const PhoneAuthScreen(),
-  //             LocationScreen.id: (context) => const LocationScreen(),
-  //             OtpScreen.id: (context) {
-  //               final args = ModalRoute.of(context)!.settings.arguments
-  //                   as Map<String, String>;
-  //               return OtpScreen(
-  //                 number: args['number']!,
-  //                 verID: args['verID']!,
-  //               );
-  //             },
-  //           },
-  //         );
-  //       }
-  //     });
 }

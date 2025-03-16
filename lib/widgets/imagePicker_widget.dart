@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:galleryimage/galleryimage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class ImagePickerWidget extends StatefulWidget {
   ImagePickerWidget({super.key});
@@ -15,7 +17,7 @@ class ImagePickerWidget extends StatefulWidget {
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   File? _image;
-  bool _uploading= false;
+  bool _uploading = false;
   final picker = ImagePicker();
 
   Future getImage() async {
@@ -32,35 +34,38 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var _provider = Provider.of<CategoryProvider>(context);
 
-
-    Future<String?> uploadFile() async{
-      File file =File (_image!.path);
+    Future<String?> uploadFile() async {
+      File file = File(_image!.path);
       String? downloadUrl;
       String imageName = 'petImage/${DateTime.now().microsecondsSinceEpoch}';
 
       try {
         await FirebaseStorage.instance.ref(imageName).putFile(file);
 
-        downloadUrl= await FirebaseStorage.instance.ref(imageName).getDownloadURL();
+        downloadUrl =
+            await FirebaseStorage.instance.ref(imageName).getDownloadURL();
 
-        if(downloadUrl!=null){
+        if (downloadUrl != null) {
           setState(() {
-            _image=null;
-            print("downloadUrl");
+            _image = null;
+            _provider.getImages(downloadUrl);
           });
         }
-      }on FirebaseException catch (e){
+      } on FirebaseException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("cancelled"),),
+          const SnackBar(
+            content: Text("cancelled"),
+          ),
         );
       }
       return downloadUrl;
-    };
-
+    }
 
     return Dialog(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           AppBar(
             elevation: 1,
@@ -77,78 +82,102 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               children: [
                 Stack(
                   children: [
-                    if(_image!=null)
-                    Positioned(
-                      right: 0,
-                      child: IconButton(onPressed: (){
-                      setState(() {
-                        _image=null;
-                      });
-                    }, icon: Icon(Icons.clear),)),
-                    Container(
-                        height: 120,
-                        width: MediaQuery.of(context).size.width,
-                        child: FittedBox(
-                          child: _image == null
-                              ? const Icon(
-                                  CupertinoIcons.photo_on_rectangle,
-                                  color: Colors.grey,
-                                )
-                              : Image.file(_image!),
+                    if (_image != null)
+                      Positioned(
+                        right: 0,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _image = null;
+                            });
+                          },
+                          icon: Icon(Icons.clear),
                         ),
-                        color: Colors.black12),
+                      ),
+                    Container(
+                      height: 120,
+                      width: MediaQuery.of(context).size.width,
+                      child: FittedBox(
+                        child: _image == null
+                            ? const Icon(
+                                CupertinoIcons.photo_on_rectangle,
+                                color: Colors.grey,
+                              )
+                            : Image.file(_image!),
+                      ),
+                      color: Colors.black12,
+                    ),
                   ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                if(_image!=null)
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed:(){
-                          setState(() {
-                            _uploading=true;
-                            uploadFile().then((url)=>{
-                              setState(() {
-                                _uploading=false;
-                              })
+                if (_provider.urlList.isNotEmpty) // Use isNotEmpty here
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: GalleryImage(
+                      imageUrls: _provider.urlList,
+                      numOfShowImages: _provider.urlList.length, // Corrected line!
+                    ),
+                  ),
+                const SizedBox(
+                  height: 20,
+                ),
+                if (_image != null)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _uploading = true;
+                              uploadFile().then((url) => {
+                                    setState(() {
+                                      _uploading = false;
+                                    })
+                                  });
                             });
-                          });
-                        },
-                        child: const Text("Save"),
-                        style: const ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(Colors.green)
-                        ),
-                      ),
-                    ),
-                   const  SizedBox(
-                      height: 10,
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Text("Cancel"),
+                          },
+                          child: const Text("Save"),
                           style: const ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(Colors.red)
+                              backgroundColor:
+                                  WidgetStatePropertyAll(Colors.green)),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Text("Cancel"),
+                          style: const ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(Colors.red)),
+                        ),
+                      ),
+                    ],
+                  ),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 20,
                 ),
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
                         onPressed: getImage,
-                        child: Text(
-                          "Upload image",
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        child: Text(_provider.urlList.isNotEmpty
+                            ? "upload more images"
+                            : "Upload image",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center),
                         style: const ButtonStyle(
                           iconColor: WidgetStatePropertyAll(Colors.black),
                         ),
@@ -156,11 +185,14 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20,),
-                if(_uploading)
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                )
+                SizedBox(
+                  height: 20,
+                ),
+                if (_uploading)
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
+                  )
               ],
             ),
           )

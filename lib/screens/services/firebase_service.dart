@@ -7,13 +7,19 @@ import 'package:geocoding/geocoding.dart';
 
 class FirebaseService {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
-  CollectionReference categories = FirebaseFirestore.instance.collection('categories');
-  User? user = FirebaseAuth.instance.currentUser;
-  
 
-  Future<void> updateUser(BuildContext context, Map<String, dynamic> data, Function() onSuccess) { // Modified
-    return users.doc(user!.uid).update(data).then((value) { // Use user!.uid
-      Navigator.pushNamed(context, HomeScreen.id);// Execute the callback
+  CollectionReference categories =
+      FirebaseFirestore.instance.collection('categories');
+  User? user = FirebaseAuth.instance.currentUser;
+
+  CollectionReference animals = FirebaseFirestore.instance.collection('animals');
+
+  Future<void> updateUser(
+      BuildContext context, Map<String, dynamic> data, Function() onSuccess) {
+    // Modified
+    return users.doc(user!.uid).update(data).then((value) {
+      // Use user!.uid
+      Navigator.pushNamed(context, HomeScreen.id); // Execute the callback
     }).catchError((error) {
       print("Failed to update user: $error");
       return Future.error(error); // Return Future.error
@@ -39,8 +45,8 @@ class FirebaseService {
     }
   }
 
-  Future<DocumentSnapshot>getUserData()async {
-    DocumentSnapshot doc= await users.doc(user?.uid).get();
+  Future<DocumentSnapshot> getUserData() async {
+    DocumentSnapshot doc = await users.doc(user?.uid).get();
     return doc;
   }
 }
