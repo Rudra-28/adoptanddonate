@@ -1,6 +1,6 @@
 import 'package:adoptanddonate_new/screens/account_screen.dart';
 import 'package:adoptanddonate_new/screens/chat_screen.dart';
-import 'package:adoptanddonate_new/screens/donateanimal/donor_cat.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/donor_cat_list.dart';
 import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:adoptanddonate_new/screens/myAd_screen.dart';
 import 'package:flutter/cupertino.dart';

@@ -15,7 +15,7 @@ class CategoryWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        height: 200,
+        height: 140,
         child: FutureBuilder<QuerySnapshot>(
           future: _service.categories.get(),
           builder:

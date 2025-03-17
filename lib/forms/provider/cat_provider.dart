@@ -8,7 +8,7 @@ class CategoryProvider with ChangeNotifier{
 late DocumentSnapshot doc;
 late DocumentSnapshot userDetails;
 late String selectedCategory;
-late String selectedSubCat;
+String? selectedSubCat;
 List<String> urlList=[];
 Map<String,dynamic> datatofirestore ={};
 
@@ -41,6 +41,12 @@ Map<String,dynamic> datatofirestore ={};
     this.userDetails= value,
     notifyListeners()
   });
+ }
+
+ clearData(){
+  this.urlList=[];
+  datatofirestore={};
+  notifyListeners();
  }
 }
 

@@ -23,45 +23,65 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   Future getImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      if (pickedFile != null) {
+    if (pickedFile != null) {
+      setState(() {
         _image = File(pickedFile.path);
-      } else {
-        print("No image selected");
-      }
+      });
+    } else {
+      print("No image selected");
+    }
+  }
+
+  Future<String?> uploadFile() async {
+    if (_image == null) return null; // Check if image is null
+    setState(() {
+      _uploading = true;
     });
+
+    try {
+      File file = File(_image!.path);
+      String imageName = 'petImage/${DateTime.now().microsecondsSinceEpoch}';
+
+      await FirebaseStorage.instance.ref(imageName).putFile(file);
+
+      String downloadUrl =
+          await FirebaseStorage.instance.ref(imageName).getDownloadURL();
+
+      if (downloadUrl!=null) {
+        setState(() {
+          _image = null;
+          Provider.of<CategoryProvider>(context, listen: false)
+              .getImages(downloadUrl);
+          _uploading = false;
+        });
+      }
+      return downloadUrl;
+    } on FirebaseException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Firebase error: ${e.message}")),
+        );
+        setState(() {
+          _uploading = false;
+        });
+      }
+      return null;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Upload failed: $e")),
+        );
+        setState(() {
+          _uploading = false;
+        });
+      }
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var _provider = Provider.of<CategoryProvider>(context);
-
-    Future<String?> uploadFile() async {
-      File file = File(_image!.path);
-      String? downloadUrl;
-      String imageName = 'petImage/${DateTime.now().microsecondsSinceEpoch}';
-
-      try {
-        await FirebaseStorage.instance.ref(imageName).putFile(file);
-
-        downloadUrl =
-            await FirebaseStorage.instance.ref(imageName).getDownloadURL();
-
-        if (downloadUrl != null) {
-          setState(() {
-            _image = null;
-            _provider.getImages(downloadUrl);
-          });
-        }
-      } on FirebaseException catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("cancelled"),
-          ),
-        );
-      }
-      return downloadUrl;
-    }
 
     return Dialog(
       child: Column(
@@ -109,10 +129,8 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                if (_provider.urlList.isNotEmpty) // Use isNotEmpty here
+                const SizedBox(height: 20),
+                if (_provider.urlList.isNotEmpty)
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.grey.shade300,
@@ -120,63 +138,48 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                     ),
                     child: GalleryImage(
                       imageUrls: _provider.urlList,
-                      numOfShowImages: _provider.urlList.length, // Corrected line!
+                      numOfShowImages: _provider.urlList.length,
                     ),
                   ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 if (_image != null)
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _uploading = true;
-                              uploadFile().then((url) => {
-                                    setState(() {
-                                      _uploading = false;
-                                    })
-                                  });
-                            });
-                          },
+                          onPressed: uploadFile, // Call uploadFile directly
                           child: const Text("Save"),
                           style: const ButtonStyle(
-                              backgroundColor:
-                                  WidgetStatePropertyAll(Colors.green)),
+                            backgroundColor:
+                                WidgetStatePropertyAll(Colors.green),
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                           child: const Text("Cancel"),
                           style: const ButtonStyle(
-                              backgroundColor: WidgetStatePropertyAll(Colors.red)),
+                            backgroundColor: WidgetStatePropertyAll(Colors.red),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
                         onPressed: getImage,
-                        child: Text(_provider.urlList.isNotEmpty
-                            ? "upload more images"
-                            : "Upload image",
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
+                        child: Text(
+                            _provider.urlList.isNotEmpty
+                                ? "upload more images"
+                                : "Upload image",
+                            style: TextStyle(color: Colors.black),
                             textAlign: TextAlign.center),
                         style: const ButtonStyle(
                           iconColor: WidgetStatePropertyAll(Colors.black),
@@ -185,9 +188,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 if (_uploading)
                   CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(

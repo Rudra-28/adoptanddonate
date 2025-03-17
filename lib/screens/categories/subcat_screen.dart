@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class SubCatList extends StatelessWidget {
   static const String id = "subcat-screen";
-  const SubCatList({Key? key}) : super(key: key); // Add Key
+  const SubCatList({super.key}); 
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +20,8 @@ class SubCatList extends StatelessWidget {
       );
     }
 
-    final String catName = args['catName'] as String? ?? 'Category'; // Safely get catName
-    final String docId = args['id'] as String? ?? ''; // Get document ID
+    final String catName = args['catName'] as String? ?? 'Category'; 
+    final String docId = args['id'] as String? ?? ''; 
 
     return Scaffold(
       appBar: AppBar(
@@ -49,28 +49,33 @@ class SubCatList extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+          var data=snapshot.data!['subCat'];
+          // final data = snapshot.data?.data() as Map<String, dynamic>?;
+          // final subCat = data?['subCat'] as List<dynamic>?;
 
-          final data = snapshot.data?.data() as Map<String, dynamic>?;
-          final subCat = data?['subCat'] as List<dynamic>?;
-
-          if (subCat == null || subCat.isEmpty) {
+          if (data == null || data.isEmpty) {
             return const Center(child: Text('No subcategories found'));
           }
 
-          return ListView.builder(
-            itemCount: subCat.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ListTile(
-                  onTap: () {},
-                  title: Text(
-                    subCat[index].toString(),
-                    style: const TextStyle(fontSize: 16),
+          return Container(
+            child: ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (BuildContext context, int index) {
+
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ListTile(
+                    onTap: () {
+
+                    },
+                    title: Text(
+                      data[index].toString(),
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),

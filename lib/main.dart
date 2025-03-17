@@ -1,12 +1,11 @@
-import 'package:adoptanddonate_new/forms/donor_bird_form.dart';
-import 'package:adoptanddonate_new/forms/donor_cat_form.dart';
 import 'package:adoptanddonate_new/forms/donor_dog_form.dart';
+import 'package:adoptanddonate_new/forms/forms_screen.dart';
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/forms/user_review_screen.dart';
 import 'package:adoptanddonate_new/screens/categories/category_list.dart';
 import 'package:adoptanddonate_new/screens/categories/subcat_screen.dart';
-import 'package:adoptanddonate_new/screens/donateanimal/donor_cat.dart';
-import 'package:adoptanddonate_new/screens/donateanimal/donor_subcat.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/donor_cat_list.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/donor_subcat_list.dart';
 import 'package:adoptanddonate_new/screens/email_verification_screen.dart';
 import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:adoptanddonate_new/screens/location_screen.dart';
@@ -60,11 +59,10 @@ class MyApp extends StatelessWidget {
         MainScreen.id: (context) => const MainScreen(),
         DonorCategoryListScreen.id: (context)=> const DonorCategoryListScreen(),
         DonorSubCategoryList.id: (context) => const DonorSubCategoryList(),
-        DonorCatForm.id: (context) => DonorCatForm(),
-        DonorBirdForm.id: (context) => DonorBirdForm(),
-        DonorDogForm.id: (context)=> DonorDogForm(),
+        DonorDogForm.id: (context) => DonorDogForm(),
         BannerWidget.id: (context) =>const BannerWidget(),
         UserReviewScreen.id: (context) =>const UserReviewScreen(),
+        FormsScreen.id: (context) => FormsScreen(),
         HomeScreen.id: (context) => HomeScreen(
               locationData: LocationData.fromMap({
                 'latitude': 0.0,
