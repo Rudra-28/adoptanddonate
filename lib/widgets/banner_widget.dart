@@ -1,3 +1,4 @@
+import 'package:adoptanddonate_new/screens/donateanimal/donor_cat_list.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 class BannerWidget extends StatelessWidget {
@@ -121,7 +122,9 @@ class BannerWidget extends StatelessWidget {
               const SizedBox(width: 20),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, DonorCategoryListScreen.id);
+                  },
                   style: ElevatedButton.styleFrom(
                      backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(

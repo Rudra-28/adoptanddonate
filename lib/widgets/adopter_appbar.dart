@@ -1,4 +1,5 @@
 import 'package:adoptanddonate_new/screens/location_screen.dart';
+import 'package:adoptanddonate_new/screens/logout_screen.dart';
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +10,7 @@ class AdopterAppBar extends StatefulWidget implements PreferredSizeWidget {
   const AdopterAppBar({Key? key}) : super(key: key);
 
   @override
-Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   _AdopterAppBarState createState() => _AdopterAppBarState();
@@ -124,53 +125,58 @@ class _AdopterAppBarState extends State<AdopterAppBar> {
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(56),
         child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                child: Column(
-                  children: [
-                    Container(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: SizedBox(
-                                height: 40,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(
-                                      Icons.search,
-                                    ),
-                                    labelText: 'Find Dogs, cats, and many more ',
-                                    labelStyle: const TextStyle(
-                                      fontSize: 12,
-                                    ),
-                                    contentPadding: const EdgeInsets.only(
-                                        left: 10, right: 10),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                  ),
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: Column(
+              children: [
+                Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 40,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(
+                                  Icons.search,
+                                ),
+                                labelText: 'Find Dogs, cats, and many more ',
+                                labelStyle: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Icon(Icons.notifications_none),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context,
+                                LogoutPage.id); // Navigate to LogoutPage
+                          },
+                          child:
+                              const Icon(Icons.logout), // Use the logout icon
+                        ),
+                       
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
+          ),
+        ),
       ),
     );
   }

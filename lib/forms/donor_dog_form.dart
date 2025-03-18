@@ -45,31 +45,35 @@ validate(CategoryProvider provider) {
           'gender': _genderController.text,
           'weight': _weightController.text,
           'nature': _natureController.text,
-          'foundlocation': _foundLocationController.text, // Corrected
-          'Name': _petNameController.text, // Corrected
-          'donorUid': _service.user?.uid, // Corrected
-          'description': _descController,
+          'foundlocation': _foundLocationController.text,
+          'Name': _petNameController.text,
+          'donorUid': _service.user?.uid,
+          'description': _descController.text, //Corrected line
           'images': provider.urlList,
-          'postAt':DateTime.now().microsecondsSinceEpoch
+          'postAt': DateTime.now().microsecondsSinceEpoch
         }
       });
-        print(provider.datatofirestore);
-        Navigator.pushNamed(context, UserReviewScreen.id);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("images not found"),
-          ),
-        );
+      log(provider.datatofirestore.toString());
+      try{
+      Navigator.pushNamed(context, UserReviewScreen.id);
+      }catch(e){
+        log("Navigator push error: $e");
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("please complete required fields"),
+          content: Text("images not found"),
         ),
       );
     }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("please complete required fields"),
+      ),
+    );
   }
+}
 
   List<String> _genderList = ['Male', 'Female', 'Unknown'];
   List<String> _natureList = [

@@ -98,7 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Padding(
                 padding: EdgeInsets.fromLTRB(1, 0, 1, 8),
                 child: Column(
-                  children: [BannerWidget(), CategoryWidget()],
+                  children: [BannerWidget(),
+                  CategoryWidget()
+                   ],
+
                 ),
               ),
             ),

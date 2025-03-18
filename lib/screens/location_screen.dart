@@ -25,7 +25,7 @@ class LocationScreenState extends State<LocationScreen> {
   loc.Location location = loc.Location();
    FirebaseService _service = FirebaseService();
 
-  late final bool locationChanging=false;
+  late final bool locationChanging=true;
 
   bool loading = false;
   bool _serviceEnabled = false;

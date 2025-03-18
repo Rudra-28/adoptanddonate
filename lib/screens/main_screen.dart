@@ -10,9 +10,9 @@ import 'package:location/location.dart';
 class MainScreen extends StatefulWidget {
   static const String id = 'main-screen';
 
-  const MainScreen({Key? key, this.locationData}) : super(key: key);
+  const MainScreen({super.key, this.locationData});
 
-  final LocationData? locationData; // Make locationData optional
+  final LocationData? locationData; 
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -20,7 +20,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
    bool _resetNavigation = false; 
-  late Widget _currentScreen; // Use late initialization
+  late Widget _currentScreen;
   int _index = 0;
   final PageStorageBucket _bucket = PageStorageBucket();
 
@@ -31,7 +31,6 @@ class _MainScreenState extends State<MainScreen> {
       locationData: widget.locationData ?? LocationData.fromMap({
         'latitude': 0.0,
         'longitude': 0.0,
-        // Add other necessary fields with default values
       }),
     );
   }
@@ -44,10 +43,10 @@ class _MainScreenState extends State<MainScreen> {
         locationData: widget.locationData ?? LocationData.fromMap({
           'latitude': 0.0,
           'longitude': 0.0,
-          // Add other necessary fields with default values
+         
         }),
       );
-      setState(() {}); // Trigger a rebuild to update the UI
+      setState(() {});
     }
   }
 
@@ -56,14 +55,14 @@ class _MainScreenState extends State<MainScreen> {
     Color color = Theme.of(context).primaryColor;
 
      if (_resetNavigation) {
-        _index = 0; // Reset to your default index
+        _index = 0;
         _currentScreen = HomeScreen(
           locationData: widget.locationData ?? LocationData.fromMap({
             'latitude': 0.0,
             'longitude': 0.0,
           }),
         );
-        _resetNavigation = false; // Reset the flag
+        _resetNavigation = false;
       }
     return Scaffold(
       body: PageStorage(

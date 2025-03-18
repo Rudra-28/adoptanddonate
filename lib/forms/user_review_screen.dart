@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:adoptanddonate_new/screens/location_screen.dart';
@@ -353,7 +352,7 @@ class _UserReviewScreenState extends State<UserReviewScreen> {
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
                                         LocationScreen(
-                                          locationChanging: null,
+                                          locationChanging: false,
                                         )));
                           },
                           icon: Icon(

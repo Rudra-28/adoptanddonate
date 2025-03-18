@@ -9,7 +9,6 @@ class CategoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Assuming FirebaseService is a Singleton or injected
     final FirebaseService _service = FirebaseService();
 
     return Padding(

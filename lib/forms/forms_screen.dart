@@ -52,44 +52,56 @@ class _FormsScreenState extends State<FormsScreen> {
   var _milkController = TextEditingController();
 
   validate(CategoryProvider provider) {
-    if (_formKey.currentState!.validate()) {
-      if (provider.urlList.isNotEmpty) {
-        provider.datatofirestore.addAll({
-          'category': {
-            'category': provider.selectedCategory,
-            'subCat': provider.selectedSubCat,
-            'breed': _breedtext.text,
-            'age': _ageController.text,
-            'gender': _genderController.text,
-            'weight': _weightController.text,
-            'nature': _natureController.text,
-            'dietary': _dietaryController.text,
-            'Name': _petNameController.text, // Corrected
-            'donorUid': _service.user?.uid, // Corrected
-            'description': _descController,
-            'vaccination': _vaccController,
-            'Milk': _milkController,
-            'images': provider.urlList,
-            'postAt': DateTime.now().microsecondsSinceEpoch
-          }
-        });
-        print(provider.datatofirestore);
+  if (_formKey.currentState!.validate()) {
+    if (provider.urlList.isNotEmpty) {
+      Map<String, dynamic> categoryData = {
+        'category': provider.selectedCategory,
+        'subCat': provider.selectedSubCat,
+        'breed': _breedtext.text,
+        'age': _ageController.text,
+        'gender': _genderController.text,
+        'weight': _weightController.text,
+        'nature': _natureController.text,
+        'dietary': _dietaryController.text,
+        'Name': _petNameController.text,
+        'donorUid': _service.user?.uid,
+        'description': _descController.text,
+        'vaccination': _vaccController.text,
+        'Milk': _milkController.text,
+        'images': provider.urlList,
+        'postAt': DateTime.now().microsecondsSinceEpoch,
+      };
+
+      // Add category-specific fields
+      if (provider.selectedCategory == 'farm animals' &&
+          (provider.selectedSubCat == 'Cow' ||
+              provider.selectedSubCat == 'Buffalo' ||
+              provider.selectedSubCat == 'Goat')) {
+        categoryData['Milk'] = _milkController.text;
+      }
+
+      provider.datatofirestore.addAll({'category': categoryData});
+      print('Data to Firestore: ${provider.datatofirestore}');
+ 
+      try {
         Navigator.pushNamed(context, UserReviewScreen.id);
-      } else {
+      } catch (e) {
+        print('Navigation error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("images not found"),
-          ),
+          SnackBar(content: Text('Navigation failed: $e')),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("please complete required fields"),
-        ),
+        const SnackBar(content: Text("Images not found")),
       );
     }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Please complete required fields")),
+    );
   }
+}
 
   List<String> _genderList = ['Male', 'Female', 'Unknown'];
   List<String> _dietaryList = [
@@ -592,38 +604,39 @@ class _FormsScreenState extends State<FormsScreen> {
                   height: 10,
                 ),
 
-                TextFormField(
-                  controller: _addressController,
-                  decoration: InputDecoration(
-                    labelText: 'Donor Address',
-                    hintText: 'Enter your full address',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    labelStyle: TextStyle(color: Colors.grey.shade700),
-                    hintStyle: TextStyle(color: Colors.grey.shade600),
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
-                    prefixIcon: Icon(Icons.location_on),
-                  ),
-                  maxLines: 1,
-                  keyboardType: TextInputType.streetAddress,
-                  textCapitalization:
-                      TextCapitalization.words, // Capitalize words
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your address.';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
+                // TextFormField(
+                //   controller: _addressController,
+                //   decoration: InputDecoration(
+                //     labelText: 'Donor Address',
+                //     hintText: 'Enter your full address',
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(10.0),
+                //     ),
+                //     focusedBorder: OutlineInputBorder(
+                //       borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                //       borderRadius: BorderRadius.circular(10.0),
+                //     ),
+                //     labelStyle: TextStyle(color: Colors.grey.shade700),
+                //     hintStyle: TextStyle(color: Colors.grey.shade600),
+                //     contentPadding:
+                //         EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+                //     prefixIcon: Icon(Icons.location_on),
+                //   ),
+                //   maxLines: 1,
+                //   keyboardType: TextInputType.streetAddress,
+                //   textCapitalization:
+                //       TextCapitalization.words, // Capitalize words
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter your address.';
+                //     }
+                //     return null;
+                //   },
+                // ),
+                // SizedBox(
+                //   height: 10,
+                // ),
+                
                 if (_catProvider.urlList.isNotEmpty)
                   Container(
                     decoration: BoxDecoration(
@@ -638,6 +651,8 @@ class _FormsScreenState extends State<FormsScreen> {
                 SizedBox(
                   height: 10,
                 ),
+
+                 if (_provider.selectedCategory == 'reptiles')
                 InkWell(
                   onTap: () {
                     showDialog(

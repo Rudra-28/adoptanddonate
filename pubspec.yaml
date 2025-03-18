@@ -52,6 +52,7 @@ dependencies:
   firebase_storage: ^12.4.4
   image_picker: ^1.1.2
   galleryimage: ^2.0.1
+  like_button: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +80,7 @@ flutter:
   assets:
     - lib/assets/images/location.jpg
     - lib/assets/images/banner.jpg
+    - lib/assets/images/dog_backup.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
