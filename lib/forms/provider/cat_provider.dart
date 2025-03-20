@@ -13,7 +13,7 @@ List<String> urlList=[];
 Map<String,dynamic> datatofirestore ={};
 
  getCategory( selectedCat){
-  this.selectedCategory= selectedCat;
+  selectedCategory= selectedCat;
   notifyListeners();
  }
  
@@ -22,30 +22,36 @@ Map<String,dynamic> datatofirestore ={};
   notifyListeners();
  }
  getCatSnapshot(snapshot){
-  this.doc=snapshot;
+  doc=snapshot;
   notifyListeners();
  }
 
  getImages(url){
-  this.urlList.add(url);
+  urlList.add(url);
   notifyListeners();
  }
 
  getDate(data){
-  this.datatofirestore= data;
+  datatofirestore= data;
    notifyListeners();
  }
 
  getUserDetails(){
   _service.getUserData().then((value)=>{
-    this.userDetails= value,
+    userDetails= value,
     notifyListeners()
   });
  }
 
  clearData(){
-  this.urlList=[];
+  urlList=[];
   datatofirestore={};
+  notifyListeners();
+ }
+
+ clearSelectedCat(){
+  selectedCategory= '';
+  selectedSubCat='';
   notifyListeners();
  }
 }

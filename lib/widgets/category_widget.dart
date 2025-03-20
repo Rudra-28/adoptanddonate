@@ -1,8 +1,14 @@
+import 'package:adoptanddonate_new/forms/donor_dog_form.dart';
+import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/screens/categories/category_list.dart';
+import 'package:adoptanddonate_new/screens/categories/subcat_screen.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/animal_by_category_list.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/donor_subcat_list.dart';
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CategoryWidget extends StatelessWidget {
   const CategoryWidget({Key? key}) : super(key: key); // Added Key
@@ -10,6 +16,7 @@ class CategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirebaseService _service = FirebaseService();
+    var _catProvider = Provider.of<CategoryProvider>(context);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -66,21 +73,35 @@ class CategoryWidget extends StatelessWidget {
                       var doc = snapshot.data!.docs[index];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: 60,
-                          height: 50,
-                          child: Column(
-                            children: [
-                              Image.network(doc['image']),
-                              Flexible(
-                                child: Text(
-                                  doc['catName'],
-                                  maxLines: 2,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 10),
+                        child: InkWell(
+                          onTap: () {
+                            _catProvider.getCategory(doc['catName']);
+                            _catProvider.getCatSnapshot(doc);
+
+                            if (doc['subCat'] == null) {
+                            
+                              _catProvider.getSubCategory(null);
+                              Navigator.pushNamed(context, AnimalByCategory.id);
+                            }
+                            Navigator.pushNamed(context, SubCatList.id,
+                                arguments: doc);
+                          },
+                          child: Container(
+                            width: 60,
+                            height: 50,
+                            child: Column(
+                              children: [
+                                Image.network(doc['image']),
+                                Flexible(
+                                  child: Text(
+                                    doc['catName'],
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 10),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );

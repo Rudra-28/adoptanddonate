@@ -53,6 +53,12 @@ dependencies:
   image_picker: ^1.1.2
   galleryimage: ^2.0.1
   like_button: ^2.0.5
+  photo_view: ^0.15.0
+  google_maps_flutter: ^2.10.1
+  map_launcher: ^3.5.0
+  url_launcher: ^6.3.1
+  search_page: ^2.3.0
+  
 
 dev_dependencies:
   flutter_test:

@@ -175,7 +175,7 @@ class _UserReviewScreenState extends State<UserReviewScreen> {
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ButtonStyle(
-                          iconColor: MaterialStateProperty.all(
+                          iconColor: WidgetStateProperty.all(
                               Theme.of(context).primaryColor),
                         ),
                       ),

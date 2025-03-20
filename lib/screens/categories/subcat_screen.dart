@@ -1,6 +1,9 @@
+import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/animal_by_category_list.dart';
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SubCatList extends StatelessWidget {
   static const String id = "subcat-screen";
@@ -9,6 +12,7 @@ class SubCatList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseService _service = FirebaseService();
+      var _catProvider = Provider.of<CategoryProvider>(context);
 
     // Retrieve arguments as a Map
     final Map<String, dynamic>? args =
@@ -66,7 +70,8 @@ class SubCatList extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   child: ListTile(
                     onTap: () {
-
+                        _catProvider.getSubCategory(data[index]);
+                        Navigator.pushNamed(context, AnimalByCategory.id);
                     },
                     title: Text(
                       data[index].toString(),

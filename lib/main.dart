@@ -1,10 +1,12 @@
 import 'package:adoptanddonate_new/forms/donor_dog_form.dart';
 import 'package:adoptanddonate_new/forms/forms_screen.dart';
+import 'package:adoptanddonate_new/forms/provider/animal_provider.dart';
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/forms/user_review_screen.dart';
 import 'package:adoptanddonate_new/screens/animals_details_screen.dart';
 import 'package:adoptanddonate_new/screens/categories/category_list.dart';
 import 'package:adoptanddonate_new/screens/categories/subcat_screen.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/animal_by_category_list.dart';
 import 'package:adoptanddonate_new/screens/donateanimal/donor_cat_list.dart';
 import 'package:adoptanddonate_new/screens/donateanimal/donor_subcat_list.dart';
 import 'package:adoptanddonate_new/screens/email_verification_screen.dart';
@@ -31,6 +33,7 @@ Future<void> main() async {
   runApp(MultiProvider(
     providers: [
       Provider(create: (_) => CategoryProvider()),
+      Provider(create: (_) => AnimalProvider()),
     ],
     child: const MyApp(),
   ));
@@ -65,6 +68,7 @@ class MyApp extends StatelessWidget {
         BannerWidget.id: (context) =>const BannerWidget(),
         UserReviewScreen.id: (context) =>const UserReviewScreen(),
         LogoutPage.id: (context) => const LogoutPage(),
+        AnimalByCategory.id: (context) => const  AnimalByCategory(),
         AnimalsDetailsScreen.id: (context) => AnimalsDetailsScreen(),
         FormsScreen.id: (context) => FormsScreen(),
         HomeScreen.id: (context) => HomeScreen(

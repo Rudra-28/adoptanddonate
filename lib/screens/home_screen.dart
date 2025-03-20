@@ -1,3 +1,5 @@
+import 'package:adoptanddonate_new/forms/provider/animal_provider.dart';
+import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/screens/animals_list.dart';
 import 'package:adoptanddonate_new/widgets/banner_widget.dart';
 import 'package:adoptanddonate_new/widgets/category_widget.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = "home-screen";
@@ -81,6 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+     var _catProvider = Provider.of<CategoryProvider>(context);
+     _catProvider.clearSelectedCat();
     return Scaffold(
       backgroundColor:Colors.grey.shade300,
      
@@ -106,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 10,),
-            AnimalsList(),
+            AnimalsList(false),
           ],
         ),
       ),

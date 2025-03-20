@@ -1,9 +1,12 @@
+import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/screens/categories/subcat_screen.dart';
+import 'package:adoptanddonate_new/screens/donateanimal/animal_by_category_list.dart';
 import 'package:adoptanddonate_new/screens/services/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage; // Import Firebase Storage
-import 'package:cached_network_image/cached_network_image.dart'; // Import CachedNetworkImage
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart'; // Import CachedNetworkImage
 
 class CategoryListScreen extends StatelessWidget {
   static const String id = "category-list";
@@ -12,6 +15,7 @@ class CategoryListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseService _service = FirebaseService();
+      var _catProvider = Provider.of<CategoryProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,6 +65,11 @@ class CategoryListScreen extends StatelessWidget {
                 child: ListTile(
                   key: Key(doc.id), // Added Key for performance
                   onTap: () {
+                    if(doc['subCat']== null){
+                             // _catProvider.clearSelectedCat();
+                              _catProvider.getSubCategory(null);
+                              Navigator.pushNamed(context, AnimalByCategory.id);
+                            }
                     Navigator.pushNamed(context, SubCatList.id, arguments: {
                       'catName': catName,
                       'id': doc.id, // Pass the document ID
