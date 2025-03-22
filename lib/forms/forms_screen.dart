@@ -21,7 +21,7 @@ class FormsScreen extends StatefulWidget {
 class _FormsScreenState extends State<FormsScreen> {
   FirebaseService _service = FirebaseService();
 
-  String _address = '';
+  String _address = ' ';
 
   @override
   void initState() {

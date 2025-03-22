@@ -27,7 +27,7 @@ class PhoneAuthService {
       'mobile': phoneNumber, // Use the passed-in phoneNumber
       'email': email,
       'name':null,
-      'address':null,
+      'address':"address",
     }).then((value) {
       // Navigate to the next screen
       Navigator.pushReplacementNamed(context, LocationScreen.id);

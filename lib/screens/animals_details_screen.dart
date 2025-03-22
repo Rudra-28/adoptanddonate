@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AnimalsDetailsScreen extends StatefulWidget {
   static const String id = 'animals-details-screen';
+  
 
   const AnimalsDetailsScreen({Key? key}) : super(key: key);
 
@@ -22,6 +23,7 @@ class AnimalsDetailsScreen extends StatefulWidget {
 }
 
 class _AnimalsDetailsScreenState extends State<AnimalsDetailsScreen> {
+  
   late GoogleMapController _controller;
 
   bool _loading = true;
@@ -50,19 +52,20 @@ class _AnimalsDetailsScreenState extends State<AnimalsDetailsScreen> {
     );
   }
 
-  _calleDonor(number){
+  _callDonor(number){
     launchUrl(number);
   }
 
   @override
   Widget build(BuildContext context) {
     var animalProvider = Provider.of<AnimalProvider>(context);
-   GeoPoint? _location;
+    GeoPoint? location;
+   //GeoPoint location = AnimalProvider.donorDetails['location'];
 if (animalProvider.donorDetails != null && animalProvider.donorDetails!.data() != null && (animalProvider.donorDetails!.data() as Map<String, dynamic>).containsKey('location')) {
-    _location = (animalProvider.donorDetails!.data() as Map<String, dynamic>)['location'];
+    location = (animalProvider.donorDetails!.data() as Map<String, dynamic>)['location'];
 } else {
     // Handle the case where location is not available
-    _location = GeoPoint(20.2581138, 73.0282436); // Default location or handle appropriately
+    location = GeoPoint(20.2581138, 73.0282436); // Default location or handle appropriately
 }
     final Animal? animal = animalProvider.currentAnimal;
 
@@ -458,8 +461,8 @@ if (animalProvider.donorDetails != null && animalProvider.donorDetails!.data() !
                               Center(
                                 child: GoogleMap(
                                   initialCameraPosition: CameraPosition(
-                                    target: LatLng(_location!.latitude,
-                                        _location!.longitude),
+                                    target: LatLng(location!.latitude,
+                                        location!.longitude),
                                     zoom: 15,
                                   ),
                                  mapType: googleMaps.MapType.normal, 
@@ -491,7 +494,7 @@ if (animalProvider.donorDetails != null && animalProvider.donorDetails!.data() !
                                   shape: Border.all(color: Colors.grey),
                                   child: IconButton(
                                     onPressed: () {
-                                      _maplauncher(_location);
+                                      _maplauncher(location);
                                     },
                                     icon:const Icon(Icons.alt_route_outlined),
                                   ),
@@ -565,7 +568,7 @@ if (animalProvider.donorDetails != null && animalProvider.donorDetails!.data() !
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                     // _calleDonor('tel:${animalProvider.donorDetails['mobile']}');
+                     _callDonor('tel:${animalProvider.donorDetails!['mobile']}');
                     },
                     style: ButtonStyle(
                       backgroundColor: WidgetStatePropertyAll(Colors.lightBlue),

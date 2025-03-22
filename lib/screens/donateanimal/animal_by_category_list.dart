@@ -19,7 +19,7 @@ class AnimalByCategory extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(_catProvider.selectedCategory ?? 'Dogs', style:  TextStyle(color: Colors.black),),
       ),
-      body: SingleChildScrollView(child: AnimalsList(true))
+      body: SingleChildScrollView(child: AnimalsList(data: {}, proScreen: false),)
     );
   }
 }

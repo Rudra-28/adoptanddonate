@@ -140,20 +140,27 @@ class LocationScreenState extends State<LocationScreen> {
   @override
   Widget build(BuildContext context) {
 
-if (widget.locationChanging == null) { // Assuming locationChanging is a boolean
+if (widget.locationChanging == true) {
   _service.users.doc(_service.user!.uid).get().then((DocumentSnapshot document) {
     if (document.exists) {
       if (document["address"] != null) {
-        if (mounted) {
-          print("entering main screen");
-          Navigator.pushReplacementNamed(context, MainScreen.id);
-        }
+        print("Entering main screen");
+        Navigator.pushReplacementNamed(context, MainScreen.id);
       } else {
-       Navigator.pushNamed(context, LocationScreen.id);
+        print("Address not found, redirecting to LocationScreen");
+        Navigator.pushNamed(context, LocationScreen.id);
       }
+    } else {
+      print("Document does not exist, redirecting to LocationScreen");
+      Navigator.pushNamed(context, LocationScreen.id);
     }
   });
+} else {
+  // 🔥 This ensures navigation happens even if locationChanging is null or false
+  print("locationChanging is false or null, redirecting to MainScreen");
+  Navigator.pushReplacementNamed(context, MainScreen.id);
 }
+
 
     return Scaffold(
       backgroundColor: Colors.white,

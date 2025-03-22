@@ -49,4 +49,8 @@ class FirebaseService {
     DocumentSnapshot doc = await users.doc(user?.uid).get();
     return doc;
   }
+   Future<DocumentSnapshot> getDonorData(id) async {
+    DocumentSnapshot doc = await users.doc(id).get();
+    return doc;
+  }
 }

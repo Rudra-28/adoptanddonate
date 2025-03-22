@@ -1,5 +1,5 @@
 import 'package:adoptanddonate_new/screens/account_screen.dart';
-import 'package:adoptanddonate_new/screens/chat_screen.dart';
+import 'package:adoptanddonate_new/screens/user_list_screen.dart';
 import 'package:adoptanddonate_new/screens/donateanimal/donor_cat_list.dart';
 import 'package:adoptanddonate_new/screens/home_screen.dart';
 import 'package:adoptanddonate_new/screens/myAd_screen.dart';
@@ -95,41 +95,50 @@ class _MainScreenState extends State<MainScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                 MaterialButton(
+  minWidth: 40,
+  onPressed: () {
+    setState(() {
+      _index = 0;
+      _resetNavigation = false; // Ensure reset flag is off
+      _currentScreen = HomeScreen(
+        locationData: widget.locationData ?? LocationData.fromMap({
+          'latitude': 0.0,
+          'longitude': 0.0,
+        }),
+      );
+    });
+  },
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(_index == 0 ? Icons.home : Icons.home_outlined),
+      Text(
+        "Home",
+        style: TextStyle(
+          color: _index == 0 ? color : Colors.black,
+          fontWeight: _index == 0 ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+    ],
+  ),
+),
+
                   MaterialButton(
                     minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        _index = 0;
-                        _currentScreen = HomeScreen(
-                          locationData: widget.locationData!,
-                        );
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(_index == 0 ? Icons.home : Icons.home_outlined),
-                        Text(
-                          "Home",
-                          style: TextStyle(
-                            color: _index == 0 ? color : Colors.black,
-                            fontWeight: _index == 0
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        _index = 1;
-                     
-                        _currentScreen = ChatScreen();
-                      });
-                    },
+                   onPressed: () {
+  setState(() {
+    _index = 1;
+    _currentScreen = UserListScreen();
+    // ChatScreen(
+    //   receiverId:
+    //       "someReceiverId", // Replace with the actual receiver ID
+    //   receiverName:
+    //       "Some Receiver Name", // Replace with the actual receiver name
+    // );
+  });
+},
+
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

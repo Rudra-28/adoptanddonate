@@ -8,27 +8,51 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 
-class AnimalsList extends StatelessWidget {
+class AnimalsList extends StatefulWidget {
+  final Map<String, dynamic> data;
   final bool proScreen;
-  AnimalsList(this.proScreen);
 
+  const AnimalsList({super.key, required this.data, required this.proScreen});
+
+  @override
+  State<AnimalsList> createState() => _AnimalsListState();
+}
+
+class _AnimalsListState extends State<AnimalsList> {
   final FirebaseService _service = FirebaseService();
+
+  String address = ' ';
 
   void navigateToAnimalDetails(BuildContext context, String donorId) {
     final animalProvider = Provider.of<AnimalProvider>(context, listen: false);
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(donorId)
-        .get()
-        .then((donorSnapshot) {
-      if (donorSnapshot.exists) {
-        animalProvider.getDonorDetails(donorSnapshot);
-      } else {
-        print('Donor document not found.');
+    // FirebaseFirestore.instance
+    //     .collection('users')
+    //     .doc(donorId)
+    //     .get()
+    //     .then((donorSnapshot) {
+    //   if (donorSnapshot.exists) {
+    //     animalProvider.getDonorDetails(donorSnapshot);
+    //   } else {
+    //     print('Donor document not found.');
+    //   }
+    // }).catchError((error) {
+    //   print('Error fetching donor details: $error');
+    // });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _service.getDonorData(widget.data['donorUid']).then((value) {
+      if (value.exists) {
+        // Ensure the document exists
+        setState(() {
+          address = (value.data() as Map<String, dynamic>)['address'] ??
+              'No Address Found';
+        });
       }
-    }).catchError((error) {
-      print('Error fetching donor details: $error');
     });
   }
 
@@ -81,7 +105,7 @@ class AnimalsList extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (proScreen == false)
+                if (widget.proScreen == false)
                   Container(
                     height: 56,
                     child: Text(
@@ -104,7 +128,6 @@ class AnimalsList extends StatelessWidget {
                         snapshot.data!.docs[index];
                     final Map<String, dynamic>? data =
                         document.data() as Map<String, dynamic>?;
-
                     if (data == null) {
                       return Center(child: Text('Data not available'));
                     }
@@ -142,7 +165,8 @@ class AnimalsList extends StatelessWidget {
                         categoryMap['age'] as String? ?? 'Age not found';
                     final String gender =
                         categoryMap['gender'] as String? ?? 'Gender not found';
-                     final List<dynamic>? images = categoryMap['images'] as List?;
+                    final List<dynamic>? images =
+                        categoryMap['images'] as List?;
 
                     final List<String>? imageUrls =
                         images?.map((e) => e.toString()).toList();
@@ -170,8 +194,8 @@ class AnimalsList extends StatelessWidget {
 
                         navigateToAnimalDetails(
                             context, donorId); // Pass the donorId
-
-                        Navigator.pushNamed(context, AnimalsDetailsScreen.id);
+// _provider.getAnimalDetails(widget.data);
+                       Navigator.pushNamed(context, AnimalsDetailsScreen.id);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
@@ -183,34 +207,43 @@ class AnimalsList extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                             child: Center(
-  child: Builder( // Use Builder to get context in the correct scope
-    builder: (context) {
-      print('Image URLs: $imageUrls'); // Correct placement
+                              child: Center(
+                                child: Builder(
+                                  // Use Builder to get context in the correct scope
+                                  builder: (context) {
+                                    print(
+                                        'Image URLs: $imageUrls'); // Correct placement
 
-      return imageUrls != null && imageUrls.isNotEmpty
-          ? Image.network(
-              imageUrls[0],
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                print('Firebase Image Load Error: $error, URL: ${imageUrls[0]}');
-                try {
-                  print('Firebase Image Load Error: $error');
-                  return Image.asset('lib/assets/images/dog_backup.jpg');
-                } catch (assetError) {
-                  print('Local Asset Load Error: $assetError');
-                  return Center(
-                    child: Text(
-                      'Image failed to load (Firebase and local asset)',
-                    ),
-                  );
-                }
-              },
-            )
-          : Image.asset('lib/assets/images/dog_backup.jpg');
-    },
-  ),
-),
+                                    return imageUrls != null &&
+                                            imageUrls.isNotEmpty
+                                        ? Image.network(
+                                            imageUrls[0],
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              print(
+                                                  'Firebase Image Load Error: $error, URL: ${imageUrls[0]}');
+                                              try {
+                                                print(
+                                                    'Firebase Image Load Error: $error');
+                                                return Image.asset(
+                                                    'lib/assets/images/dog_backup.jpg');
+                                              } catch (assetError) {
+                                                print(
+                                                    'Local Asset Load Error: $assetError');
+                                                return Center(
+                                                  child: Text(
+                                                    'Image failed to load (Firebase and local asset)',
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          )
+                                        : Image.asset(
+                                            'lib/assets/images/dog_backup.jpg');
+                                  },
+                                ),
+                              ),
                             ),
                             SizedBox(height: 8),
                             Expanded(

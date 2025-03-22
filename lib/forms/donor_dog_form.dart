@@ -31,7 +31,7 @@ class _DonorDogFormState extends State<DonorDogForm> {
   var _petNameController = TextEditingController();
   var _addressController = TextEditingController();
 
-  String _address = '';
+  String _address = ' ';
 
 validate(CategoryProvider provider) {
   if (_formKey.currentState!.validate()) {

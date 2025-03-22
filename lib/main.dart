@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
         EmailVerificationScreen.id: (context) => EmailVerificationScreen(),
         LoginScreen.id: (context) => const LoginScreen(),
         PhoneAuthScreen.id: (context) => const PhoneAuthScreen(),
-        LocationScreen.id: (context) => const LocationScreen(locationChanging: null,),
+        LocationScreen.id: (context) => const LocationScreen(locationChanging: true,),
         EmailAuthScreen.id: (context) => const EmailAuthScreen(),
         CategoryListScreen.id: (context) => const CategoryListScreen(),
         SubCatList.id: (context) => const SubCatList(),

@@ -92,6 +92,7 @@ class _UserReviewScreenState extends State<UserReviewScreen> {
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(Icons.error),
                           )
+                          
                         : const SizedBox.shrink(),
                     title: Text(
                       _provider.datatofirestore['title'] ?? '',
