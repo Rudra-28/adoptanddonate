@@ -136,30 +136,41 @@ class LocationScreenState extends State<LocationScreen> {
       }
     }
   }
+  @override
+void initState() {
+  super.initState();
+  _checkUserAddress(); // Move the navigation logic to initState()
+}
+
+void _checkUserAddress() {
+  if (widget.locationChanging == true) {
+    _service.users.doc(_service.user!.uid).get().then((DocumentSnapshot document) {
+      if (document.exists) {
+        if (document["address"] != null) {
+          print("Entering main screen");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacementNamed(context, MainScreen.id);
+          });
+        } else {
+          print("Address not found, redirecting to LocationScreen");
+        }
+      } else {
+        print("Document does not exist, redirecting to LocationScreen");
+      }
+    });
+  } else {
+    print("locationChanging is false or null, redirecting to MainScreen");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacementNamed(context, MainScreen.id);
+    });
+  }
+}
+
+// ... rest of your LocationScreenState class
 
   @override
   Widget build(BuildContext context) {
 
-if (widget.locationChanging == true) {
-  _service.users.doc(_service.user!.uid).get().then((DocumentSnapshot document) {
-    if (document.exists) {
-      if (document["address"] != null) {
-        print("Entering main screen");
-        Navigator.pushReplacementNamed(context, MainScreen.id);
-      } else {
-        print("Address not found, redirecting to LocationScreen");
-        Navigator.pushNamed(context, LocationScreen.id);
-      }
-    } else {
-      print("Document does not exist, redirecting to LocationScreen");
-      Navigator.pushNamed(context, LocationScreen.id);
-    }
-  });
-} else {
-  // 🔥 This ensures navigation happens even if locationChanging is null or false
-  print("locationChanging is false or null, redirecting to MainScreen");
-  Navigator.pushReplacementNamed(context, MainScreen.id);
-}
 
 
     return Scaffold(

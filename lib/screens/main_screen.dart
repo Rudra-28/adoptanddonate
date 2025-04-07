@@ -1,8 +1,8 @@
-import 'package:adoptanddonate_new/screens/account_screen.dart';
-import 'package:adoptanddonate_new/screens/user_list_screen.dart';
+import 'package:adoptanddonate_new/screens/adoption_guide_page.dart';
 import 'package:adoptanddonate_new/screens/donateanimal/donor_cat_list.dart';
 import 'package:adoptanddonate_new/screens/home_screen.dart';
-import 'package:adoptanddonate_new/screens/myAd_screen.dart';
+import 'package:adoptanddonate_new/screens/nearby_location.dart';
+import 'package:adoptanddonate_new/screens/pet_care_tips.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -12,14 +12,14 @@ class MainScreen extends StatefulWidget {
 
   const MainScreen({super.key, this.locationData});
 
-  final LocationData? locationData; 
+  final LocationData? locationData;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-   bool _resetNavigation = false; 
+  bool _resetNavigation = false;
   late Widget _currentScreen;
   int _index = 0;
   final PageStorageBucket _bucket = PageStorageBucket();
@@ -28,10 +28,11 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _currentScreen = HomeScreen(
-      locationData: widget.locationData ?? LocationData.fromMap({
-        'latitude': 0.0,
-        'longitude': 0.0,
-      }),
+      locationData: widget.locationData ??
+          LocationData.fromMap({
+            'latitude': 0.0,
+            'longitude': 0.0,
+          }),
     );
   }
 
@@ -40,11 +41,11 @@ class _MainScreenState extends State<MainScreen> {
     super.didUpdateWidget(oldWidget);
     if (widget.locationData != oldWidget.locationData) {
       _currentScreen = HomeScreen(
-        locationData: widget.locationData ?? LocationData.fromMap({
-          'latitude': 0.0,
-          'longitude': 0.0,
-         
-        }),
+        locationData: widget.locationData ??
+            LocationData.fromMap({
+              'latitude': 0.0,
+              'longitude': 0.0,
+            }),
       );
       setState(() {});
     }
@@ -54,16 +55,17 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     Color color = Theme.of(context).primaryColor;
 
-     if (_resetNavigation) {
-        _index = 0;
-        _currentScreen = HomeScreen(
-          locationData: widget.locationData ?? LocationData.fromMap({
-            'latitude': 0.0,
-            'longitude': 0.0,
-          }),
-        );
-        _resetNavigation = false;
-      }
+    if (_resetNavigation) {
+      _index = 0;
+      _currentScreen = HomeScreen(
+        locationData: widget.locationData ??
+            LocationData.fromMap({
+              'latitude': 0.0,
+              'longitude': 0.0,
+            }),
+      );
+      _resetNavigation = false;
+    }
     return Scaffold(
       body: PageStorage(
         child: _currentScreen,
@@ -73,11 +75,11 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 4,
         backgroundColor: Colors.purple,
         onPressed: () {
-        setState(() {
-          _resetNavigation = true; 
-        });
-        Navigator.pushNamed(context, DonorCategoryListScreen.id);
-      },
+          setState(() {
+            _resetNavigation = true;
+          });
+          Navigator.pushNamed(context, DonorCategoryListScreen.id);
+        },
         child: const CircleAvatar(
           backgroundColor: Colors.white,
           child: Icon(Icons.add),
@@ -95,58 +97,53 @@ class _MainScreenState extends State<MainScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 MaterialButton(
-  minWidth: 40,
-  onPressed: () {
-    setState(() {
-      _index = 0;
-      _resetNavigation = false; // Ensure reset flag is off
-      _currentScreen = HomeScreen(
-        locationData: widget.locationData ?? LocationData.fromMap({
-          'latitude': 0.0,
-          'longitude': 0.0,
-        }),
-      );
-    });
-  },
-  child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Icon(_index == 0 ? Icons.home : Icons.home_outlined),
-      Text(
-        "Home",
-        style: TextStyle(
-          color: _index == 0 ? color : Colors.black,
-          fontWeight: _index == 0 ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-    ],
-  ),
-),
-
                   MaterialButton(
                     minWidth: 40,
-                   onPressed: () {
-  setState(() {
-    _index = 1;
-    _currentScreen = UserListScreen();
-    // ChatScreen(
-    //   receiverId:
-    //       "someReceiverId", // Replace with the actual receiver ID
-    //   receiverName:
-    //       "Some Receiver Name", // Replace with the actual receiver name
-    // );
-  });
-},
-
+                    onPressed: () {
+                      setState(() {
+                        _index = 0;
+                        _resetNavigation = false; // Ensure reset flag is off
+                        _currentScreen = HomeScreen(
+                          locationData: widget.locationData ??
+                              LocationData.fromMap({
+                                'latitude': 0.0,
+                                'longitude': 0.0,
+                              }),
+                        );
+                      });
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(_index == 0 ? Icons.home : Icons.home_outlined),
+                        Text(
+                          "Home",
+                          style: TextStyle(
+                            color: _index == 0 ? color : Colors.black,
+                            fontWeight: _index == 0
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () {
+                      setState(() {
+                        _index = 1;
+                        _currentScreen = PetCareTipsPage() ;
+                      });
+                    },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(_index == 1
-                            ? CupertinoIcons.chat_bubble_fill
+                            ? CupertinoIcons.lightbulb_fill
                             : CupertinoIcons.chat_bubble),
                         Text(
-                          "Chat", // Changed "Account" to "Chat" as per your icons
+                          "Tips", // Changed "Account" to "Chat" as per your icons
                           style: TextStyle(
                             color: _index == 1 ? color : Colors.black,
                             fontWeight: _index == 1
@@ -166,8 +163,8 @@ class _MainScreenState extends State<MainScreen> {
                     onPressed: () {
                       setState(() {
                         _index = 2;
-                       
-                         _currentScreen = MyAdScreen(); 
+
+                        _currentScreen = NearbyAdoptionsPage();
                       });
                     },
                     child: Column(
@@ -175,9 +172,9 @@ class _MainScreenState extends State<MainScreen> {
                       children: [
                         Icon(_index == 2
                             ? CupertinoIcons.suit_heart_fill
-                            : CupertinoIcons.suit_heart), 
+                            : CupertinoIcons.suit_heart),
                         Text(
-                          "Favorites", 
+                          "Favorites",
                           style: TextStyle(
                             color: _index == 2 ? color : Colors.black,
                             fontWeight: _index == 2
@@ -193,18 +190,18 @@ class _MainScreenState extends State<MainScreen> {
                     onPressed: () {
                       setState(() {
                         _index = 3;
-                       
-                         _currentScreen = AccountScreen();
+
+                        _currentScreen = AnimalGuideSelectionPage();
                       });
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(_index == 3
-                            ? CupertinoIcons.person_fill
-                            : CupertinoIcons.person),
+                            ? CupertinoIcons.check_mark_circled
+                            : CupertinoIcons.check_mark),
                         Text(
-                          "Account",
+                          "Guide",
                           style: TextStyle(
                             color: _index == 3 ? color : Colors.black,
                             fontWeight: _index == 3

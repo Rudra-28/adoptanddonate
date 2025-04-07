@@ -3,6 +3,8 @@ import 'package:adoptanddonate_new/forms/forms_screen.dart';
 import 'package:adoptanddonate_new/forms/provider/animal_provider.dart';
 import 'package:adoptanddonate_new/forms/provider/cat_provider.dart';
 import 'package:adoptanddonate_new/forms/user_review_screen.dart';
+import 'package:adoptanddonate_new/screens/adoption_guide_page.dart';
+import 'package:adoptanddonate_new/screens/animal_guide_detail_page.dart';
 import 'package:adoptanddonate_new/screens/animals_details_screen.dart';
 import 'package:adoptanddonate_new/screens/categories/category_list.dart';
 import 'package:adoptanddonate_new/screens/categories/subcat_screen.dart';
@@ -15,6 +17,8 @@ import 'package:adoptanddonate_new/screens/location_screen.dart';
 import 'package:adoptanddonate_new/screens/login_screen.dart';
 import 'package:adoptanddonate_new/screens/logout_screen.dart';
 import 'package:adoptanddonate_new/screens/main_screen.dart';
+import 'package:adoptanddonate_new/screens/nearby_location.dart';
+import 'package:adoptanddonate_new/screens/pet_care_tips.dart';
 import 'package:adoptanddonate_new/screens/splash_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/phone_auth_screen.dart';
 import 'package:adoptanddonate_new/widgets/authentication/email_auth_screen.dart';
@@ -57,20 +61,27 @@ class MyApp extends StatelessWidget {
         EmailVerificationScreen.id: (context) => EmailVerificationScreen(),
         LoginScreen.id: (context) => const LoginScreen(),
         PhoneAuthScreen.id: (context) => const PhoneAuthScreen(),
-        LocationScreen.id: (context) => const LocationScreen(locationChanging: true,),
+        LocationScreen.id: (context) => const LocationScreen(
+              locationChanging: null,
+            ),
         EmailAuthScreen.id: (context) => const EmailAuthScreen(),
         CategoryListScreen.id: (context) => const CategoryListScreen(),
         SubCatList.id: (context) => const SubCatList(),
         MainScreen.id: (context) => const MainScreen(),
-        DonorCategoryListScreen.id: (context)=> const DonorCategoryListScreen(),
+        DonorCategoryListScreen.id: (context) =>
+            const DonorCategoryListScreen(),
         DonorSubCategoryList.id: (context) => const DonorSubCategoryList(),
         DonorDogForm.id: (context) => DonorDogForm(),
-        BannerWidget.id: (context) =>const BannerWidget(),
-        UserReviewScreen.id: (context) =>const UserReviewScreen(),
+        BannerWidget.id: (context) => const BannerWidget(),
+        UserReviewScreen.id: (context) => const UserReviewScreen(),
         LogoutPage.id: (context) => const LogoutPage(),
-        AnimalByCategory.id: (context) => const  AnimalByCategory(),
+        AnimalGuideSelectionPage.id: (context) => AnimalGuideSelectionPage(),
+        AnimalByCategory.id: (context) => const AnimalByCategory(),
+        PetCareTipsPage.id: (context) => PetCareTipsPage(),
         AnimalsDetailsScreen.id: (context) => AnimalsDetailsScreen(),
         FormsScreen.id: (context) => FormsScreen(),
+        AnimalGuideDetailPage.id: (context) => AnimalGuideDetailPage(),
+        NearbyAdoptionsPage.id:(context)=> NearbyAdoptionsPage(),
         HomeScreen.id: (context) => HomeScreen(
               locationData: LocationData.fromMap({
                 'latitude': 0.0,

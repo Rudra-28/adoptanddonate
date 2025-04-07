@@ -330,7 +330,7 @@ void didChangeDependencies() {
                     controller: _weightController,
                     decoration: InputDecoration(
                         labelText: 'Weight',
-                        hintText: 'Select Gender',
+                        hintText: 'Select weight',
                         border: OutlineInputBorder()),
                     validator: (value) {
                       if (value!.isEmpty) {
